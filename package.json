@@ -4,8 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev:local": "vite --mode local",
+    "dev:dev": "vite --mode development",
+    "dev:test": "vite --mode test",
+    "dev:production": "vite --mode production",
     "build": "vite build",
+    "build:dev": "vite build --mode development",
+    "build:test": "vite build --mode test",
+    "build:production": "vite build --mode production",
     "lint": "oxlint",
     "preview": "vite preview"
   },

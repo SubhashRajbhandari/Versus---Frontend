@@ -70,7 +70,7 @@ function App() {
 
     try {
       if (action === 'login') {
-        const response = await fetch('/api/auth/login', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
@@ -98,7 +98,7 @@ function App() {
           preferredSports: [] // Empty by default for now
         };
 
-        const response = await fetch('/api/auth/signup', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
