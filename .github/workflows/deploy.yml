@@ -55,15 +55,21 @@ jobs:
         run: |
           if [ "${{ github.base_ref }}" = "dev" ]; then
             echo "command=npm run build:dev" >> $GITHUB_OUTPUT
+            echo "vite_api_url=${{ secrets.VITE_API_URL_DEV }}" >> $GITHUB_OUTPUT
           elif [ "${{ github.base_ref }}" = "test" ]; then
             echo "command=npm run build:test" >> $GITHUB_OUTPUT
+            echo "vite_api_url=${{ secrets.VITE_API_URL_TEST }}" >> $GITHUB_OUTPUT
           elif [ "${{ github.base_ref }}" = "main" ]; then
             echo "command=npm run build:production" >> $GITHUB_OUTPUT
+            echo "vite_api_url=${{ secrets.VITE_API_URL_PROD }}" >> $GITHUB_OUTPUT
           else
             echo "command=npm run build" >> $GITHUB_OUTPUT
+            echo "vite_api_url=" >> $GITHUB_OUTPUT
           fi
 
       - name: Execute Build Check
+        env:
+          VITE_API_URL: ${{ steps.build-cmd.outputs.vite_api_url }}
         run: ${{ steps.build-cmd.outputs.command }}
 
   # ---------------------------------------------------------------
@@ -103,21 +109,26 @@ jobs:
           if [ "$TARGET" = "dev" ]; then
             echo "env_name=Dev" >> $GITHUB_OUTPUT
             echo "build_cmd=npm run build:dev" >> $GITHUB_OUTPUT
+            echo "vite_api_url=${{ secrets.VITE_API_URL_DEV }}" >> $GITHUB_OUTPUT
             echo "s3_bucket=${{ secrets.AWS_S3_BUCKET_DEV }}" >> $GITHUB_OUTPUT
             echo "cloudfront_id=${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_DEV }}" >> $GITHUB_OUTPUT
           elif [ "$TARGET" = "test" ]; then
             echo "env_name=Test" >> $GITHUB_OUTPUT
             echo "build_cmd=npm run build:test" >> $GITHUB_OUTPUT
+            echo "vite_api_url=${{ secrets.VITE_API_URL_TEST }}" >> $GITHUB_OUTPUT
             echo "s3_bucket=${{ secrets.AWS_S3_BUCKET_TEST }}" >> $GITHUB_OUTPUT
             echo "cloudfront_id=${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_TEST }}" >> $GITHUB_OUTPUT
           elif [ "$TARGET" = "production" ] || [ "$TARGET" = "main" ]; then
             echo "env_name=Production" >> $GITHUB_OUTPUT
             echo "build_cmd=npm run build:production" >> $GITHUB_OUTPUT
+            echo "vite_api_url=${{ secrets.VITE_API_URL_PROD }}" >> $GITHUB_OUTPUT
             echo "s3_bucket=${{ secrets.AWS_S3_BUCKET_PROD }}" >> $GITHUB_OUTPUT
             echo "cloudfront_id=${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_PROD }}" >> $GITHUB_OUTPUT
           fi
 
       - name: Run Environment Build
+        env:
+          VITE_API_URL: ${{ steps.env-config.outputs.vite_api_url }}
         run: ${{ steps.env-config.outputs.build_cmd }}
 
       - name: Configure AWS Credentials
