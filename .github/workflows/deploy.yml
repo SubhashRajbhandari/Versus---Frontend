@@ -1,0 +1,137 @@
+name: Frontend CI/CD Pipeline
+
+on:
+  # Triggered on Pull Requests (Validation check only, no deployment)
+  pull_request:
+    branches:
+      - dev
+      - test
+      - main
+
+  # Triggered automatically when PR is merged into dev
+  push:
+    branches:
+      - dev
+
+  # Manual trigger from GitHub Actions tab for Test & Production deployments
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Select Target Environment to Deploy'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+          - test
+          - production
+
+jobs:
+  # ---------------------------------------------------------------
+  # Job 1: CI Check (Runs on PR creation & updates - No Deployment)
+  # ---------------------------------------------------------------
+  ci-check:
+    if: github.event_name == 'pull_request'
+    name: Build Check & Lint (PR Validation)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Linter
+        run: npm run lint
+
+      - name: Determine Target Environment Build
+        id: build-cmd
+        run: |
+          if [ "${{ github.base_ref }}" = "dev" ]; then
+            echo "command=npm run build:dev" >> $GITHUB_OUTPUT
+          elif [ "${{ github.base_ref }}" = "test" ]; then
+            echo "command=npm run build:test" >> $GITHUB_OUTPUT
+          elif [ "${{ github.base_ref }}" = "main" ]; then
+            echo "command=npm run build:production" >> $GITHUB_OUTPUT
+          else
+            echo "command=npm run build" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Execute Build Check
+        run: ${{ steps.build-cmd.outputs.command }}
+
+  # ---------------------------------------------------------------
+  # Job 2: CD Deployment
+  # - Dev: Auto-deploys when merged into dev
+  # - Test / Production: Deploys manually via workflow_dispatch
+  # ---------------------------------------------------------------
+  deploy:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    name: Build & Deploy to Environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Set Target Environment Configuration
+        id: env-config
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TARGET="${{ inputs.target_environment }}"
+          else
+            TARGET="${{ github.ref_name }}"
+          fi
+
+          echo "Target selected: $TARGET"
+
+          if [ "$TARGET" = "dev" ]; then
+            echo "env_name=Dev" >> $GITHUB_OUTPUT
+            echo "build_cmd=npm run build:dev" >> $GITHUB_OUTPUT
+            echo "s3_bucket=${{ secrets.AWS_S3_BUCKET_DEV }}" >> $GITHUB_OUTPUT
+            echo "cloudfront_id=${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_DEV }}" >> $GITHUB_OUTPUT
+          elif [ "$TARGET" = "test" ]; then
+            echo "env_name=Test" >> $GITHUB_OUTPUT
+            echo "build_cmd=npm run build:test" >> $GITHUB_OUTPUT
+            echo "s3_bucket=${{ secrets.AWS_S3_BUCKET_TEST }}" >> $GITHUB_OUTPUT
+            echo "cloudfront_id=${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_TEST }}" >> $GITHUB_OUTPUT
+          elif [ "$TARGET" = "production" ] || [ "$TARGET" = "main" ]; then
+            echo "env_name=Production" >> $GITHUB_OUTPUT
+            echo "build_cmd=npm run build:production" >> $GITHUB_OUTPUT
+            echo "s3_bucket=${{ secrets.AWS_S3_BUCKET_PROD }}" >> $GITHUB_OUTPUT
+            echo "cloudfront_id=${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_PROD }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run Environment Build
+        run: ${{ steps.env-config.outputs.build_cmd }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
+      - name: Sync Static Build to S3
+        run: |
+          aws s3 sync dist/ s3://${{ steps.env-config.outputs.s3_bucket }} --delete
+
+      - name: Invalidate CloudFront Cache (Optional)
+        if: ${{ steps.env-config.outputs.cloudfront_id != '' }}
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ steps.env-config.outputs.cloudfront_id }} --paths "/*"
