@@ -6,13 +6,13 @@ function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  
+
   // Additional Signup fields
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
-  
+
   const [errors, setErrors] = useState({});
   const [globalMessage, setGlobalMessage] = useState({ type: '', text: '' });
   const [isLoading, setIsLoading] = useState(false);
@@ -75,9 +75,9 @@ function App() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
           setGlobalMessage({ type: 'success', text: 'Authentication successful! Redirecting...' });
           localStorage.setItem('token', data.token);
@@ -103,9 +103,9 @@ function App() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
           setGlobalMessage({ type: 'success', text: 'Registration successful! Redirecting...' });
           localStorage.setItem('token', data.token);
@@ -129,7 +129,7 @@ function App() {
       <div className="login-card">
         <h1 className="title">{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
         <p className="subtitle">
-          {isLogin ? 'Log in to your Versus account.' : 'Sign up to get started with Versus.'}
+          {isLogin ? 'Log in to your Versus accountsssss.' : 'Sign up to get started with Versus.'}
         </p>
 
         <form noValidate>
