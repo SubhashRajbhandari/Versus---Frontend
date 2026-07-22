@@ -129,7 +129,7 @@ function App() {
       <div className="login-card">
         <h1 className="title">{isLogin ? 'Welcome Back' : 'Create Account'}</h1>
         <p className="subtitle">
-          {isLogin ? 'Log in to your Versus accountsssss.' : 'Sign up to get started with Versus.'}
+          {isLogin ? 'YOYO Log in to your Versus accountss.' : 'Sign up to get started with Versus.'}
         </p>
 
         <form noValidate>
