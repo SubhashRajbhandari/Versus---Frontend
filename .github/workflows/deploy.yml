@@ -28,7 +28,7 @@ on:
 jobs:
   # ---------------------------------------------------------------
   # Deployment Job
-  # - Dev: Auto-deploys when a PR is merged into dev (or pushed to dev)
+  # - Dev: Auto-deploys when a PR is merged into dev (or pushed to dev) 
   # - Test / Production: Deploys manually via workflow_dispatch
   # ---------------------------------------------------------------
   deploy:
