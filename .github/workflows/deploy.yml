@@ -1,13 +1,11 @@
 name: Frontend CI/CD Pipeline
 
 on:
-  # Triggered on Pull Requests (Validation check for open PRs, auto-deploy check on merge)
+  # Triggered when Pull Request is merged into dev
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [closed]
     branches:
       - dev
-      - test
-      - main
 
   # Triggered automatically when code is pushed/merged into dev
   push:
@@ -29,54 +27,8 @@ on:
 
 jobs:
   # ---------------------------------------------------------------
-  # Job 1: CI Check (Runs on PR creation & updates - No Deployment)
-  # ---------------------------------------------------------------
-  ci-check:
-    if: github.event_name == 'pull_request' && github.event.action != 'closed'
-    name: Build Check & Lint (PR Validation)
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Run Linter
-        run: npm run lint
-
-      - name: Determine Target Environment Build
-        id: build-cmd
-        run: |
-          if [ "${{ github.base_ref }}" = "dev" ]; then
-            echo "command=npm run build:dev" >> $GITHUB_OUTPUT
-            echo "vite_api_url=${{ secrets.VITE_API_URL_DEV }}" >> $GITHUB_OUTPUT
-          elif [ "${{ github.base_ref }}" = "test" ]; then
-            echo "command=npm run build:test" >> $GITHUB_OUTPUT
-            echo "vite_api_url=${{ secrets.VITE_API_URL_TEST }}" >> $GITHUB_OUTPUT
-          elif [ "${{ github.base_ref }}" = "main" ]; then
-            echo "command=npm run build:production" >> $GITHUB_OUTPUT
-            echo "vite_api_url=${{ secrets.VITE_API_URL_PROD }}" >> $GITHUB_OUTPUT
-          else
-            echo "command=npm run build" >> $GITHUB_OUTPUT
-            echo "vite_api_url=" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Execute Build Check
-        env:
-          VITE_API_URL: ${{ steps.build-cmd.outputs.vite_api_url }}
-        run: ${{ steps.build-cmd.outputs.command }}
-
-  # ---------------------------------------------------------------
-  # Job 2: CD Deployment
-  # - Dev: Auto-deploys when a feature branch (VER-*) is merged into dev
+  # Deployment Job
+  # - Dev: Auto-deploys when a PR is merged into dev (or pushed to dev)
   # - Test / Production: Deploys manually via workflow_dispatch
   # ---------------------------------------------------------------
   deploy:
@@ -90,8 +42,7 @@ jobs:
         github.event_name == 'pull_request' &&
         github.event.action == 'closed' &&
         github.event.pull_request.merged == true &&
-        github.event.pull_request.base.ref == 'dev' &&
-        (startsWith(github.event.pull_request.head.ref, 'VER-') || contains(github.event.pull_request.head.ref, 'VER-'))
+        github.event.pull_request.base.ref == 'dev'
       )
     name: Build & Deploy to Environment
     runs-on: ubuntu-latest
@@ -120,6 +71,9 @@ jobs:
             TARGET="${{ github.ref_name }}"
           fi
 
+          # Convert to lowercase for case-insensitive matching (e.g. DEV -> dev)
+          TARGET=$(echo "$TARGET" | tr '[:upper:]' '[:lower:]')
+
           echo "Target selected: $TARGET"
 
           if [ "$TARGET" = "dev" ]; then
@@ -134,7 +88,7 @@ jobs:
             echo "vite_api_url=${{ secrets.VITE_API_URL_TEST }}" >> $GITHUB_OUTPUT
             echo "s3_bucket=${{ secrets.AWS_S3_BUCKET_TEST }}" >> $GITHUB_OUTPUT
             echo "cloudfront_id=${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_TEST }}" >> $GITHUB_OUTPUT
-          elif [ "$TARGET" = "production" ] || [ "$TARGET" = "main" ]; then
+          elif [ "$TARGET" = "production" ] || [ "$TARGET" = "main" ] || [ "$TARGET" = "prod" ]; then
             echo "env_name=Production" >> $GITHUB_OUTPUT
             echo "build_cmd=npm run build:production" >> $GITHUB_OUTPUT
             echo "vite_api_url=${{ secrets.VITE_API_URL_PROD }}" >> $GITHUB_OUTPUT
@@ -165,4 +119,5 @@ jobs:
         if: ${{ steps.env-config.outputs.cloudfront_id != '' }}
         run: |
           aws cloudfront create-invalidation --distribution-id ${{ steps.env-config.outputs.cloudfront_id }} --paths "/*"
+
 
