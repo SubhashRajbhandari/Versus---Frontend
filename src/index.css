@@ -240,3 +240,479 @@ button:disabled {
     animation: spin 1s linear infinite;
     display: inline-block;
 }
+
+.large-spinner {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-width: 3px;
+    border-top-color: #00F2FE;
+    border-right-color: transparent;
+}
+
+/* ==========================================================================
+   Versus Application Layout & Matchmaking Wizard (Reference UI Specs)
+   ========================================================================== */
+
+/* Full view container reset */
+body:has(.vs-app-container) {
+    display: block;
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+    background-color: #F8FAFC;
+    color: #1E293B;
+}
+
+.vs-app-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #FFFFFF;
+}
+
+/* --- Dark Sidebar Navigation (Left) --- */
+.vs-sidebar {
+    width: 260px;
+    min-width: 260px;
+    background-color: #0A1128;
+    color: #F8FAFC;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem 1.25rem 1.5rem 1.25rem;
+}
+
+.vs-brand {
+    padding-left: 0.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.vs-brand-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+}
+
+.vs-brand-sub {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #64748B;
+    display: block;
+    margin-top: 0.2rem;
+}
+
+.vs-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.vs-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    color: #94A3B8;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.vs-nav-icon {
+    font-size: 1.1rem;
+    width: 22px;
+    text-align: center;
+}
+
+/* Activated Matchmaking Menu Pill (Mint / Emerald Green) */
+.vs-nav-item.active {
+    background-color: #D1FADF;
+    color: #064E3B;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(209, 250, 223, 0.15);
+}
+
+.vs-nav-item.active .vs-nav-icon {
+    color: #064E3B;
+}
+
+.vs-nav-item.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.vs-sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 1.25rem;
+}
+
+.vs-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: rgba(239, 68, 68, 0.1);
+    color: #F87171;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.vs-logout-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+/* --- Main Content Area (Right) --- */
+.vs-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #FFFFFF;
+    padding: 1.75rem 3.5rem;
+    overflow-y: auto;
+}
+
+/* Top Header Bar */
+.vs-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 2rem;
+}
+
+.vs-top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.vs-icon-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: #F1F5F9;
+    border: none;
+    border-radius: 50%;
+    color: #475569;
+    font-size: 1.1rem;
+    position: relative;
+    cursor: pointer;
+}
+
+.vs-unread-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: #EF4444;
+    border-radius: 50%;
+    border: 2px solid #FFFFFF;
+}
+
+.vs-user-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.vs-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #A7F3D0;
+    color: #064E3B;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vs-user-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1E293B;
+}
+
+/* Wizard Container */
+.vs-wizard-container {
+    max-width: 1050px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Stepper Bar --- */
+.vs-stepper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 3.5rem;
+    padding: 0 1rem;
+}
+
+.vs-stepper-track {
+    position: absolute;
+    top: 18px;
+    left: 40px;
+    right: 40px;
+    height: 3px;
+    background-color: #E2E8F0;
+    z-index: 1;
+}
+
+.vs-stepper-progress {
+    height: 100%;
+    width: 25%;
+    background-color: #059669;
+}
+
+.vs-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 2;
+}
+
+.vs-step-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    border: 2px solid #CBD5E1;
+    color: #64748B;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 4px #FFFFFF;
+}
+
+.vs-step.active .vs-step-circle {
+    background-color: #059669;
+    border-color: #059669;
+    color: #FFFFFF;
+}
+
+.vs-step-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #94A3B8;
+}
+
+.vs-step.active .vs-step-label {
+    color: #1E293B;
+    font-weight: 700;
+}
+
+/* Heading Group */
+.vs-heading-group {
+    margin-bottom: 2.25rem;
+}
+
+.vs-page-title {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: #1E293B;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.4rem;
+}
+
+.vs-page-subtitle {
+    font-size: 1rem;
+    color: #64748B;
+}
+
+.vs-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem;
+    gap: 1rem;
+    color: #64748B;
+}
+
+/* --- Sports Grid (4 columns x 2 rows = 8 cards) --- */
+.vs-sports-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+.vs-sport-card {
+    background-color: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 2.25rem 1.25rem 1.75rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    user-select: none;
+}
+
+.vs-sport-card:hover {
+    border-color: #CBD5E1;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+.vs-card-icon-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: #EEF2FF;
+    color: #4F46E5;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.vs-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1E293B;
+    text-align: center;
+    transition: color 0.2s ease;
+}
+
+/* --- Selected Card State (Exact Match to Image) --- */
+.vs-sport-card.selected {
+    border: 2px solid #059669;
+    box-shadow: 0 0 0 1px #059669, 0 8px 24px rgba(5, 150, 105, 0.12);
+}
+
+.vs-sport-card.selected .vs-card-icon-circle {
+    background-color: #52E0A4;
+    color: #064E3B;
+}
+
+.vs-sport-card.selected .vs-card-title {
+    color: #059669;
+}
+
+/* --- More Sports Section --- */
+.vs-more-sports {
+    margin-top: 2rem;
+}
+
+.vs-more-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #F8FAFC;
+    border: 1px stroke #E2E8F0;
+    border-radius: 10px;
+    color: #059669;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background 0.2s ease;
+}
+
+.vs-more-btn:hover {
+    background-color: #ECFDF5;
+}
+
+.vs-more-grid {
+    margin-top: 1.25rem;
+    animation: fadeIn 0.3s ease;
+}
+
+/* --- Continue Action Footer --- */
+.vs-action-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 3.5rem;
+    padding-bottom: 2rem;
+}
+
+.vs-continue-btn {
+    width: auto;
+    padding: 0.85rem 2.25rem;
+    background-color: #047857;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
+}
+
+.vs-continue-btn:hover:not(:disabled) {
+    background-color: #065F46;
+    box-shadow: 0 6px 16px rgba(4, 120, 87, 0.35);
+    transform: translateY(-1px);
+}
+
+.vs-continue-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1100px) {
+    .vs-sports-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 850px) {
+    .vs-app-container {
+        flex-direction: column;
+    }
+    .vs-sidebar {
+        width: 100%;
+        min-width: 100%;
+        padding: 1.5rem;
+    }
+    .vs-main {
+        padding: 1.5rem;
+    }
+    .vs-sports-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 500px) {
+    .vs-sports-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
