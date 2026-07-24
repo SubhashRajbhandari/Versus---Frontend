@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Matchmaking from './components/Matchmaking';
+import Dashboard from './components/Dashboard';
 import './index.css'; // Vite uses index.css as global
 
 function App() {
@@ -154,7 +154,7 @@ function App() {
   };
 
   if (isAuthenticated) {
-    return <Matchmaking user={currentUser} onLogout={handleLogout} />;
+    return <Dashboard user={currentUser} onLogout={handleLogout} />;
   }
 
   return (
