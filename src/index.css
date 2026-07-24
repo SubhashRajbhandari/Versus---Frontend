@@ -685,6 +685,425 @@ body:has(.vs-app-container) {
     box-shadow: none;
 }
 
+/* --- Top Bar Header Layout */
+.vs-top-bar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    gap: 1.5rem;
+}
+
+.header-greeting h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #1E293B;
+    margin-bottom: 0.2rem;
+}
+
+.header-subtitle {
+    font-size: 0.9rem;
+    color: #64748B;
+}
+
+.header-center {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+}
+
+/* Start Playing Button (Green Highlight) */
+.start-playing-btn {
+    width: auto;
+    padding: 0.75rem 1.75rem;
+    background-color: #059669;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25);
+    transition: all 0.2s ease;
+}
+
+.start-playing-btn:hover {
+    background-color: #047857;
+    box-shadow: 0 6px 18px rgba(5, 150, 105, 0.35);
+    transform: translateY(-1px);
+}
+
+.btn-icon-left {
+    font-size: 1rem;
+}
+
+.ml-auto {
+    margin-left: auto;
+}
+
+/* Profile Dropdown Wrapper */
+.profile-menu-wrapper {
+    position: relative;
+}
+
+.vs-user-badge-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #F1F5F9;
+    border: 1px solid #E2E8F0;
+    padding: 0.35rem 0.85rem 0.35rem 0.35rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.vs-user-badge-btn:hover {
+    background: #E2E8F0;
+}
+
+.vs-chevron {
+    font-size: 0.75rem;
+    color: #64748B;
+    transition: transform 0.2s ease;
+}
+
+.vs-chevron.open {
+    transform: rotate(180deg);
+}
+
+.profile-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 290px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 0 20px 48px rgba(0, 0, 0, 0.05);
+    padding: 1.25rem;
+    z-index: 100;
+    animation: fadeIn 0.2s ease;
+}
+
+.profile-dropdown-header {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.avatar-circle-lg {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background-color: #A7F3D0;
+    color: #064E3B;
+    font-weight: 800;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.profile-dropdown-divider {
+    height: 1px;
+    background-color: #E2E8F0;
+    margin: 1rem 0;
+}
+
+.profile-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.825rem;
+    color: #475569;
+}
+
+.detail-icon {
+    font-size: 0.85rem;
+    color: #059669;
+    width: 16px;
+    text-align: center;
+}
+
+.dropdown-logout-btn {
+    width: 100%;
+    padding: 0.65rem;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background 0.2s ease;
+}
+
+.dropdown-logout-btn:hover {
+    background-color: rgba(239, 68, 68, 0.2);
+}
+
+/* Home Dashboard Content Layout */
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+    max-width: 1100px;
+}
+
+.dashboard-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1E293B;
+}
+
+.card {
+    background-color: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 1.5rem;
+}
+
+/* Action Card */
+.action-card {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    border-left: 4px solid #EF4444;
+}
+
+.card-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.3rem 0.65rem;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.badge-danger {
+    background-color: #FEE2E2;
+    color: #DC2626;
+}
+
+.badge-success {
+    background-color: #D1FADF;
+    color: #065F46;
+}
+
+.badge-secondary {
+    background-color: #F1F5F9;
+    color: #475569;
+}
+
+.badge-danger-soft {
+    background-color: #FEF2F2;
+    color: #EF4444;
+}
+
+.card-timestamp {
+    font-size: 0.8rem;
+    color: #64748B;
+    font-weight: 600;
+}
+
+.card-event-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1E293B;
+    margin-bottom: 0.35rem;
+}
+
+.card-event-venue {
+    font-size: 0.875rem;
+    color: #64748B;
+    margin-bottom: 1.25rem;
+}
+
+.applicant-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+}
+
+.applicant-info {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.applicant-avatar {
+    font-size: 2rem;
+    color: #64748B;
+}
+
+.applicant-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1E293B;
+}
+
+.applicant-rating {
+    font-size: 0.775rem;
+    color: #64748B;
+}
+
+.applicant-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.action-btn-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.action-btn-circle:hover {
+    transform: scale(1.08);
+}
+
+.reject-btn {
+    background-color: #FEE2E2;
+    color: #DC2626;
+}
+
+.accept-btn {
+    background-color: #D1FADF;
+    color: #065F46;
+}
+
+/* Activity List */
+.activity-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+}
+
+.activity-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.event-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.825rem;
+    color: #64748B;
+}
+
+.card-footer-action {
+    margin-top: 0.5rem;
+}
+
+.outline-btn {
+    width: auto;
+    padding: 0.45rem 0.9rem;
+    background: transparent;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.outline-btn:hover {
+    background: #F1F5F9;
+}
+
+.right-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+}
+
+.players-count {
+    font-size: 0.75rem;
+    color: #64748B;
+}
+
+.highlight-pending {
+    color: #D97706;
+    font-weight: 700;
+}
+
+/* History Table */
+.history-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.875rem;
+}
+
+.history-table th {
+    background-color: #F8FAFC;
+    color: #64748B;
+    font-weight: 700;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.history-table td {
+    padding: 1rem 1.5rem;
+    color: #1E293B;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.history-table tr:last-child td {
+    border-bottom: none;
+}
+
 /* --- Responsive Adjustments --- */
 @media (max-width: 1100px) {
     .vs-sports-grid {
@@ -714,5 +1133,3 @@ body:has(.vs-app-container) {
         grid-template-columns: 1fr;
     }
 }
-
-
