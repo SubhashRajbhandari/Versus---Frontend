@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Matchmaking from './components/Matchmaking';
 import './index.css'; // Vite uses index.css as global
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,6 +20,29 @@ function App() {
   const [errors, setErrors] = useState({});
   const [globalMessage, setGlobalMessage] = useState({ type: '', text: '' });
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
+    if (token) {
+      setIsAuthenticated(true);
+      if (savedUser) {
+        try {
+          setCurrentUser(JSON.parse(savedUser));
+        } catch {
+          setCurrentUser(null);
+        }
+      }
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setIsAuthenticated(false);
+    setCurrentUser(null);
+    resetForm();
+  };
 
   const resetForm = () => {
     setEmail('');
@@ -79,11 +106,12 @@ function App() {
         const data = await response.json();
 
         if (response.ok) {
-          setGlobalMessage({ type: 'success', text: 'Authentication successful! Redirecting...' });
+          setGlobalMessage({ type: 'success', text: 'Authentication successful!' });
           localStorage.setItem('token', data.token);
-          if (data.user) {
-            localStorage.setItem('user', JSON.stringify(data.user));
-          }
+          const loggedUser = data.user || { name: email.split('@')[0], email };
+          localStorage.setItem('user', JSON.stringify(loggedUser));
+          setCurrentUser(loggedUser);
+          setIsAuthenticated(true);
         } else {
           setGlobalMessage({ type: 'error', text: data.error || 'Login failed. Please try again.' });
         }
@@ -107,11 +135,12 @@ function App() {
         const data = await response.json();
 
         if (response.ok) {
-          setGlobalMessage({ type: 'success', text: 'Registration successful! Redirecting...' });
+          setGlobalMessage({ type: 'success', text: 'Registration successful!' });
           localStorage.setItem('token', data.token);
-          if (data.user) {
-            localStorage.setItem('user', JSON.stringify(data.user));
-          }
+          const registeredUser = data.user || { name: name || email.split('@')[0], email };
+          localStorage.setItem('user', JSON.stringify(registeredUser));
+          setCurrentUser(registeredUser);
+          setIsAuthenticated(true);
         } else {
           setGlobalMessage({ type: 'error', text: data.error || 'Registration failed. Please try again.' });
         }
@@ -123,6 +152,10 @@ function App() {
       setIsLoading(false);
     }
   };
+
+  if (isAuthenticated) {
+    return <Matchmaking user={currentUser} onLogout={handleLogout} />;
+  }
 
   return (
     <div className="login-container">
