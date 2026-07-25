@@ -1510,3 +1510,284 @@ body:has(.vs-app-container) {
         grid-template-columns: 1fr;
     }
 }
+
+/* ==========================================================================
+   Host a Game Page Styles (Matching Mockup Image 1)
+   ========================================================================== */
+.vs-host-page-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding-top: 1rem;
+    padding-bottom: 3rem;
+}
+
+.vs-host-page-title {
+    font-size: 2.35rem;
+    font-weight: 800;
+    color: #1E293B;
+    margin-bottom: 2rem;
+    letter-spacing: -0.02em;
+}
+
+.vs-host-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 3rem 3.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.vs-host-card-header {
+    margin-bottom: 2.25rem;
+}
+
+.vs-host-card-title {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #1E293B;
+    margin-bottom: 0.5rem;
+}
+
+.vs-host-card-subtitle {
+    font-size: 0.95rem;
+    color: #64748B;
+    line-height: 1.5;
+}
+
+.vs-host-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+.vs-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.vs-form-group label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin-bottom: 0;
+}
+
+.vs-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.vs-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.vs-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 1rem;
+    background: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #1E293B;
+    transition: all 0.2s ease;
+}
+
+.vs-input:focus {
+    outline: none;
+    border-color: #4F46E5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.vs-input-has-icon {
+    padding-left: 2.75rem;
+}
+
+.vs-input-icon-left {
+    position: absolute;
+    left: 1rem;
+    color: #64748B;
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+.vs-input-icon-right {
+    position: absolute;
+    right: 1rem;
+    color: #94A3B8;
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+.vs-select {
+    appearance: none;
+    cursor: pointer;
+    padding-right: 2.75rem;
+}
+
+.vs-field-caption {
+    font-size: 0.825rem;
+    color: #64748B;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.25rem;
+}
+
+/* Players Needed Blue Control Box */
+.vs-players-box {
+    background: #EEF2FF;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.vs-players-label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #475569;
+}
+
+.vs-players-counter {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.vs-counter-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background: #CBD5E1;
+    border: none;
+    color: #1E293B;
+    font-size: 1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vs-counter-btn:hover:not(:disabled) {
+    background: #94A3B8;
+    color: #FFFFFF;
+}
+
+.vs-counter-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.vs-counter-value {
+    width: 64px;
+    height: 42px;
+    background: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1E293B;
+}
+
+.vs-players-bounds-hint {
+    font-size: 0.775rem;
+    color: #64748B;
+}
+
+/* Form Actions */
+.vs-host-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #F1F5F9;
+}
+
+.vs-host-cancel-btn {
+    background: transparent;
+    border: none;
+    color: #475569;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0.75rem 1.25rem;
+    transition: color 0.2s ease;
+}
+
+.vs-host-cancel-btn:hover {
+    color: #0F172A;
+}
+
+.vs-host-submit-btn {
+    background: #293548;
+    color: #FFFFFF;
+    padding: 0.85rem 2rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(41, 53, 72, 0.2);
+    transition: all 0.2s ease;
+}
+
+.vs-host-submit-btn:hover:not(:disabled) {
+    background: #1E293B;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(30, 41, 59, 0.3);
+}
+
+.vs-host-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Alerts */
+.vs-alert {
+    padding: 0.9rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.vs-alert-error {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FCA5A5;
+}
+
+.vs-alert-success {
+    background: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #6EE7B7;
+}
+
+@media (max-width: 650px) {
+    .vs-host-card {
+        padding: 2rem 1.5rem;
+    }
+    .vs-form-row {
+        grid-template-columns: 1fr;
+    }
+}
+

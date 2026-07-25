@@ -97,7 +97,7 @@ export default function Matchmaking({ user, onLogout }) {
           const data = await response.json();
           if (data.sports && data.sports.length > 0) {
             const formatted = data.sports.map((s) => ({
-              id: SPORTS_JSON_MAP[s.name.toLowerCase()] || s.id,
+              id: s.id || SPORTS_JSON_MAP[s.name.toLowerCase()],
               name: s.name,
               icon: getSportIcon(s.name)
             }));
