@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import HostGame from './HostGame';
 import '../index.css';
 
 // Default list of sports matching the reference UI + additional sports for the "More" section
@@ -74,7 +75,7 @@ const getSportIcon = (name) => {
 };
 
 export default function Dashboard({ user, onLogout }) {
-  const [activeNav, setActiveNav] = useState('home'); // 'home' | 'matchmaking'
+  const [activeNav, setActiveNav] = useState('home'); // 'home' | 'matchmaking' | 'host_game'
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   // Matchmaking Stepper State (3 Steps: 1. Sport, 2. Type, 3. Action)
@@ -129,7 +130,7 @@ export default function Dashboard({ user, onLogout }) {
           const data = await response.json();
           if (data.sports && data.sports.length > 0) {
             const formatted = data.sports.map((s) => ({
-              id: SPORTS_JSON_MAP[s.name.toLowerCase()] || s.id,
+              id: s.id || SPORTS_JSON_MAP[s.name.toLowerCase()],
               name: s.name,
               icon: getSportIcon(s.name)
             }));
@@ -201,13 +202,34 @@ export default function Dashboard({ user, onLogout }) {
       gameType: type,
       userPreference: userPref
     }));
+    if (type === 'host') {
+      setActiveNav('host_game');
+    }
   };
 
   const handleStep2Continue = () => {
-    if (matchmakingData.gameType) {
+    if (matchmakingData.gameType === 'host') {
+      setActiveNav('host_game');
+    } else if (matchmakingData.gameType) {
       setWizardStep(3);
     }
   };
+
+  if (activeNav === 'host_game') {
+    const currentSport = sports.find((s) => s.id === matchmakingData.sportId) || {
+      id: matchmakingData.sportId || '287dae3a-cf4e-43dd-b842-e232cc378c36',
+      name: matchmakingData.sportName || 'Basketball'
+    };
+    return (
+      <HostGame
+        user={user}
+        selectedSport={currentSport}
+        onCancel={() => setActiveNav('matchmaking')}
+        onSuccess={() => setActiveNav('home')}
+        onLogout={onLogout}
+      />
+    );
+  }
 
   return (
     <div className="vs-app-container">
