@@ -16,15 +16,27 @@ const getPlayerBoundsForSport = (sportName) => {
   return { max: 20, defaultVal: 10 };
 };
 
-// Fallback default venues if backend is unavailable
+// Fallback default venues sorted by sport_id column if backend is unavailable
 const DEFAULT_VENUES = [
-  { id: '9a21b3c4-1111-4222-8333-555555555551', name: 'Downtown Community Center Court', address: '123 Main St, Downtown' },
-  { id: '9a21b3c4-1111-4222-8333-555555555552', name: 'National Sports Complex Futsal Arena', address: '456 Stadium Way' },
-  { id: '9a21b3c4-1111-4222-8333-555555555553', name: 'Westside Soccer & Football Turf', address: '789 Park Ave, Westside' },
-  { id: '9a21b3c4-1111-4222-8333-555555555554', name: 'Apex Indoor Badminton Club', address: '321 Sports Center Dr' },
-  { id: '9a21b3c4-1111-4222-8333-555555555555', name: 'City Center Tennis & Pickleball Courts', address: '654 Grand Ave' },
-  { id: '9a21b3c4-1111-4222-8333-555555555556', name: 'Valley Volleyball Dome', address: '987 Valley Rd' }
+  { id: '9a21b3c4-1111-4222-8333-555555555551', name: 'National Sports Complex Futsal Arena', address: '456 Stadium Way, Kathmandu', sport_id: '70f40861-d81b-46c5-b4dd-a2f28993b796' },
+  { id: '9a21b3c4-1111-4222-8333-555555555552', name: 'Westside Futsal & Turf Center', address: '789 Park Ave, Lalitpur', sport_id: '70f40861-d81b-46c5-b4dd-a2f28993b796' },
+  { id: '9a21b3c4-1111-4222-8333-555555555553', name: 'Apex Futsal Club', address: '101 Arena Way, Bhaktapur', sport_id: '70f40861-d81b-46c5-b4dd-a2f28993b796' },
+  { id: '9a21b3c4-1111-4222-8333-555555555554', name: 'Downtown Community Center Basketball Court', address: '123 Main St, Downtown', sport_id: '287dae3a-cf4e-43dd-b842-e232cc378c36' },
+  { id: '9a21b3c4-1111-4222-8333-555555555555', name: 'Metro Basketball Arena', address: '88 Hoop St, City Center', sport_id: '287dae3a-cf4e-43dd-b842-e232cc378c36' },
+  { id: '9a21b3c4-1111-4222-8333-555555555556', name: 'Westside Soccer & Football Turf', address: '789 Park Ave, Westside', sport_id: '1e11188f-fb25-461c-947b-309cba3a9a8d' },
+  { id: '9a21b3c4-1111-4222-8333-555555555557', name: 'Apex Indoor Badminton Club', address: '321 Sports Center Dr', sport_id: 'c9569279-8525-434d-9f0f-c15b209f445b' },
+  { id: '9a21b3c4-1111-4222-8333-555555555558', name: 'City Center Tennis & Pickleball Courts', address: '654 Grand Ave', sport_id: '19d46582-4167-449d-9f25-0801b74a6463' },
+  { id: '9a21b3c4-1111-4222-8333-555555555559', name: 'Valley Volleyball Dome', address: '987 Valley Rd', sport_id: '2b319d51-1305-4fd6-a233-1f7fd3f1572d' }
 ];
+
+// Strictly match sportId from local storage / selected sport with venue table's sport_id column
+const filterVenuesForSport = (venuesList, targetSportId) => {
+  if (!venuesList || venuesList.length === 0 || !targetSportId) return [];
+
+  return venuesList.filter(
+    (v) => v.sport_id && String(v.sport_id).toLowerCase() === String(targetSportId).toLowerCase()
+  );
+};
 
 export default function HostGame({ user, selectedSport, onCancel, onSuccess, onLogout }) {
   const sportName = selectedSport?.name || 'Basketball';
@@ -36,8 +48,8 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
   const [date, setDate] = useState('2026-08-01');
   const [time, setTime] = useState('10:00');
   
-  const [venues, setVenues] = useState(DEFAULT_VENUES);
-  const [selectedVenueId, setSelectedVenueId] = useState(DEFAULT_VENUES[0].id);
+  const [venues, setVenues] = useState([]);
+  const [selectedVenueId, setSelectedVenueId] = useState('');
   const [loadingVenues, setLoadingVenues] = useState(true);
 
   // Resolved sport_id from tallying sports table
@@ -82,28 +94,49 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
     fetchSportFromTable();
   }, [sportName, initialSportId]);
 
-  // Retrieve venues from venue table (sets venue_id to the id in response of /api/venues)
+  // Retrieve venues matching sportId from local storage and sport_id column in venue table
   useEffect(() => {
     async function fetchVenues() {
       try {
+        setLoadingVenues(true);
+        // Priority: local storage 'sportId' / 'gameId', resolvedSportId, initialSportId
+        const localStorageSportId = localStorage.getItem('sportId') || localStorage.getItem('gameId');
+        const targetSportId = localStorageSportId || resolvedSportId || initialSportId;
+
         const apiUrl = import.meta.env.VITE_API_URL || '';
-        const response = await fetch(`${apiUrl}/api/venues`);
+        const response = await fetch(`${apiUrl}/api/venues?sport_id=${targetSportId}`);
+        let fetchedList = DEFAULT_VENUES;
         if (response.ok) {
           const data = await response.json();
           if (data.venues && data.venues.length > 0) {
-            setVenues(data.venues);
-            setSelectedVenueId(data.venues[0].id);
+            fetchedList = data.venues;
           }
         }
+        const relevantVenues = filterVenuesForSport(fetchedList, targetSportId);
+        setVenues(relevantVenues);
+        if (relevantVenues.length > 0) {
+          setSelectedVenueId(relevantVenues[0].id);
+        } else {
+          setSelectedVenueId('');
+        }
       } catch (err) {
-        console.warn('Could not fetch venues from API, using defaults:', err);
+        console.warn('Could not fetch venues from API, filtering default venues:', err);
+        const localStorageSportId = localStorage.getItem('sportId') || localStorage.getItem('gameId');
+        const targetSportId = localStorageSportId || resolvedSportId || initialSportId;
+        const relevantVenues = filterVenuesForSport(DEFAULT_VENUES, targetSportId);
+        setVenues(relevantVenues);
+        if (relevantVenues.length > 0) {
+          setSelectedVenueId(relevantVenues[0].id);
+        } else {
+          setSelectedVenueId('');
+        }
       } finally {
         setLoadingVenues(false);
       }
     }
 
     fetchVenues();
-  }, []);
+  }, [sportName, resolvedSportId, initialSportId]);
 
   const handleDecrement = () => {
     if (playersNeeded > 1) {
@@ -329,12 +362,16 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
                   >
                     {loadingVenues ? (
                       <option value="">Loading venues...</option>
-                    ) : (
+                    ) : venues.length > 0 ? (
                       venues.map((venue) => (
                         <option key={venue.id} value={venue.id}>
                           {venue.name} — {venue.address}
                         </option>
                       ))
+                    ) : (
+                      <option value="" disabled>
+                        no venue available for now
+                      </option>
                     )}
                   </select>
                   <i className="fa-solid fa-map-location-dot vs-input-icon-right"></i>

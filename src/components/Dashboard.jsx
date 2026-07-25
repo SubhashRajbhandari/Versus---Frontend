@@ -224,7 +224,10 @@ export default function Dashboard({ user, onLogout }) {
       <HostGame
         user={user}
         selectedSport={currentSport}
-        onCancel={() => setActiveNav('matchmaking')}
+        onCancel={() => {
+          setActiveNav('matchmaking');
+          setWizardStep(1);
+        }}
         onSuccess={() => setActiveNav('home')}
         onLogout={onLogout}
       />
@@ -251,10 +254,13 @@ export default function Dashboard({ user, onLogout }) {
               <span>Home</span>
             </button>
 
-            {/* Match Making Item */}
+            {/* Match Making Item - Redirects to Select Sport Section (Step 1) */}
             <button
               className={`vs-nav-item ${activeNav === 'matchmaking' ? 'active' : ''}`}
-              onClick={() => setActiveNav('matchmaking')}
+              onClick={() => {
+                setActiveNav('matchmaking');
+                setWizardStep(1);
+              }}
             >
               <i className="fa-solid fa-people-group vs-nav-icon"></i>
               <span>Match Making</span>
