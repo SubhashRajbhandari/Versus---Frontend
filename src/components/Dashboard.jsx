@@ -42,11 +42,35 @@ export default function Dashboard({ user, onLogout }) {
   const [activeNav, setActiveNav] = useState('home'); // 'home' | 'matchmaking'
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-  // Matchmaking State
+  // Matchmaking Stepper State (3 Steps: 1. Sport, 2. Type, 3. Action)
+  const [wizardStep, setWizardStep] = useState(1);
+
+  // Locally recorded inputs payload state
+  const [matchmakingData, setMatchmakingData] = useState(() => {
+    const saved = localStorage.getItem('vs_matchmaking_draft');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        // Fallback
+      }
+    }
+    return {
+      sportId: '3',
+      sportName: 'Basketball',
+      gameType: null // 'host' | 'join'
+    };
+  });
+
+  // Sports list state
   const [sports, setSports] = useState([]);
   const [loadingSports, setLoadingSports] = useState(true);
   const [showMoreSports, setShowMoreSports] = useState(false);
-  const [selectedSport, setSelectedSport] = useState('3'); // Default Basketball
+
+  // Persist matchmaking draft locally whenever it changes
+  useEffect(() => {
+    localStorage.setItem('vs_matchmaking_draft', JSON.stringify(matchmakingData));
+  }, [matchmakingData]);
 
   useEffect(() => {
     async function fetchSports() {
@@ -105,6 +129,34 @@ export default function Dashboard({ user, onLogout }) {
 
   const primarySports = sports.slice(0, 8);
   const secondarySports = sports.slice(8);
+
+  // Handlers for selection
+  const handleSportSelect = (sport) => {
+    setMatchmakingData((prev) => ({
+      ...prev,
+      sportId: sport.id,
+      sportName: sport.name
+    }));
+  };
+
+  const handleStep1Continue = () => {
+    if (matchmakingData.sportId) {
+      setWizardStep(2);
+    }
+  };
+
+  const handleGameTypeSelect = (type) => {
+    setMatchmakingData((prev) => ({
+      ...prev,
+      gameType: type
+    }));
+  };
+
+  const handleStep2Continue = () => {
+    if (matchmakingData.gameType) {
+      setWizardStep(3);
+    }
+  };
 
   return (
     <div className="vs-app-container">
@@ -172,7 +224,10 @@ export default function Dashboard({ user, onLogout }) {
             <div className="header-center">
               <button
                 className="start-playing-btn"
-                onClick={() => setActiveNav('matchmaking')}
+                onClick={() => {
+                  setActiveNav('matchmaking');
+                  setWizardStep(1);
+                }}
               >
                 <i className="fa-solid fa-users btn-icon-left"></i>
                 Start Playing
@@ -384,111 +439,250 @@ export default function Dashboard({ user, onLogout }) {
             </section>
           </div>
         ) : (
-          /* MATCHMAKING STEPPER & SPORT SELECTION GRID VIEW */
+          /* MATCHMAKING 3-STEP WIZARD VIEW */
           <div className="vs-wizard-container">
-            {/* Stepper Bar */}
+            {/* 3-Step Completion Stepper Bar */}
             <div className="vs-stepper">
               <div className="vs-stepper-track">
-                <div className="vs-stepper-progress"></div>
+                <div
+                  className="vs-stepper-progress"
+                  style={{
+                    width: wizardStep === 1 ? '25%' : wizardStep === 2 ? '50%' : '100%'
+                  }}
+                ></div>
               </div>
 
-              <div className="vs-step active">
-                <div className="vs-step-circle">1</div>
+              {/* Step 1: Sport */}
+              <div className={`vs-step ${wizardStep === 1 ? 'active' : wizardStep > 1 ? 'completed' : ''}`}>
+                <div className="vs-step-circle">
+                  {wizardStep > 1 ? <i className="fa-solid fa-check"></i> : '1'}
+                </div>
                 <span className="vs-step-label">Sport</span>
               </div>
 
-              <div className="vs-step">
-                <div className="vs-step-circle">2</div>
+              {/* Step 2: Type */}
+              <div className={`vs-step ${wizardStep === 2 ? 'active' : wizardStep > 2 ? 'completed' : ''}`}>
+                <div className="vs-step-circle">
+                  {wizardStep > 2 ? <i className="fa-solid fa-check"></i> : '2'}
+                </div>
                 <span className="vs-step-label">Type</span>
               </div>
 
-              <div className="vs-step">
+              {/* Step 3: Action */}
+              <div className={`vs-step ${wizardStep === 3 ? 'active' : ''}`}>
                 <div className="vs-step-circle">3</div>
                 <span className="vs-step-label">Action</span>
               </div>
             </div>
 
-            {/* Heading & Subtitle */}
-            <div className="vs-heading-group">
-              <h2 className="vs-page-title">Select your Sport</h2>
-              <p className="vs-page-subtitle">
-                Choose the sport you want to play to find the best match.
-              </p>
-            </div>
-
-            {/* Sports Grid */}
-            {loadingSports ? (
-              <div className="vs-loading">
-                <i className="spinner vs-spinner"></i>
-                <p>Loading sports...</p>
-              </div>
-            ) : (
+            {/* STEP 1: SPORT SELECTION */}
+            {wizardStep === 1 && (
               <>
-                {/* Primary 8 Sports Grid */}
-                <div className="vs-sports-grid">
-                  {primarySports.map((sport) => {
-                    const isSelected = selectedSport === sport.id;
-                    return (
-                      <div
-                        key={sport.id}
-                        className={`vs-sport-card ${isSelected ? 'selected' : ''}`}
-                        onClick={() => setSelectedSport(sport.id)}
-                      >
-                        <div className="vs-card-icon-circle">
-                          <i className={`fa-solid ${sport.icon}`}></i>
-                        </div>
-                        <span className="vs-card-title">{sport.name}</span>
-                      </div>
-                    );
-                  })}
+                <div className="vs-heading-group">
+                  <h2 className="vs-page-title">Select your Sport</h2>
+                  <p className="vs-page-subtitle">
+                    Choose the sport you want to play to find the best match.
+                  </p>
                 </div>
 
-                {/* Expandable "More Sports" Section */}
-                {secondarySports.length > 0 && (
-                  <div className="vs-more-sports">
-                    <button
-                      className="vs-more-btn"
-                      onClick={() => setShowMoreSports(!showMoreSports)}
-                    >
-                      <span>
-                        {showMoreSports
-                          ? 'Show Less'
-                          : `View More Sports (${secondarySports.length} remaining)`}
-                      </span>
-                      <i className={`fa-solid ${showMoreSports ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
-                    </button>
-
-                    {showMoreSports && (
-                      <div className="vs-sports-grid vs-more-grid">
-                        {secondarySports.map((sport) => {
-                          const isSelected = selectedSport === sport.id;
-                          return (
-                            <div
-                              key={sport.id}
-                              className={`vs-sport-card ${isSelected ? 'selected' : ''}`}
-                              onClick={() => setSelectedSport(sport.id)}
-                            >
-                              <div className="vs-card-icon-circle">
-                                <i className={`fa-solid ${sport.icon}`}></i>
-                              </div>
-                              <span className="vs-card-title">{sport.name}</span>
+                {loadingSports ? (
+                  <div className="vs-loading">
+                    <i className="spinner vs-spinner"></i>
+                    <p>Loading sports...</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="vs-sports-grid">
+                      {primarySports.map((sport) => {
+                        const isSelected = matchmakingData.sportId === sport.id;
+                        return (
+                          <div
+                            key={sport.id}
+                            className={`vs-sport-card ${isSelected ? 'selected' : ''}`}
+                            onClick={() => handleSportSelect(sport)}
+                          >
+                            <div className="vs-card-icon-circle">
+                              <i className={`fa-solid ${sport.icon}`}></i>
                             </div>
-                          );
-                        })}
+                            <span className="vs-card-title">{sport.name}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {secondarySports.length > 0 && (
+                      <div className="vs-more-sports">
+                        <button
+                          className="vs-more-btn"
+                          onClick={() => setShowMoreSports(!showMoreSports)}
+                        >
+                          <span>
+                            {showMoreSports
+                              ? 'Show Less'
+                              : `View More Sports (${secondarySports.length} remaining)`}
+                          </span>
+                          <i className={`fa-solid ${showMoreSports ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+                        </button>
+
+                        {showMoreSports && (
+                          <div className="vs-sports-grid vs-more-grid">
+                            {secondarySports.map((sport) => {
+                              const isSelected = matchmakingData.sportId === sport.id;
+                              return (
+                                <div
+                                  key={sport.id}
+                                  className={`vs-sport-card ${isSelected ? 'selected' : ''}`}
+                                  onClick={() => handleSportSelect(sport)}
+                                >
+                                  <div className="vs-card-icon-circle">
+                                    <i className={`fa-solid ${sport.icon}`}></i>
+                                  </div>
+                                  <span className="vs-card-title">{sport.name}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     )}
-                  </div>
-                )}
 
-                {/* Continue Action Button */}
-                <div className="vs-action-footer">
+                    <div className="vs-action-footer">
+                      <button
+                        className="vs-continue-btn"
+                        disabled={!matchmakingData.sportId}
+                        onClick={handleStep1Continue}
+                      >
+                        <span>Continue</span>
+                        <i className="fa-solid fa-arrow-right"></i>
+                      </button>
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+
+            {/* STEP 2: TYPE (HOW DO YOU WANT TO PLAY? - HOST VS JOIN) */}
+            {wizardStep === 2 && (
+              <>
+                <div className="vs-heading-group">
+                  <h2 className="vs-page-title">Find Your Match</h2>
+                  <p className="vs-page-subtitle">
+                    Configure your game settings to hit the field.
+                  </p>
+                </div>
+
+                <div className="vs-section-subhead">
+                  <h3>How do you want to play?</h3>
+                </div>
+
+                <div className="vs-type-grid">
+                  {/* Host a Game Option */}
+                  <div
+                    className={`vs-type-card ${matchmakingData.gameType === 'host' ? 'selected' : ''}`}
+                    onClick={() => handleGameTypeSelect('host')}
+                  >
+                    <div className="vs-type-icon-circle">
+                      <i className="fa-solid fa-bullhorn"></i>
+                    </div>
+                    <h3 className="vs-type-card-title">Host a Game</h3>
+                    <p className="vs-type-card-desc">
+                      Create a new lobby, set the rules, and invite players or wait for challengers to join your field.
+                    </p>
+                    <button
+                      type="button"
+                      className={`vs-type-btn ${matchmakingData.gameType === 'host' ? 'active-type' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleGameTypeSelect('host');
+                      }}
+                    >
+                      Select Host
+                    </button>
+                  </div>
+
+                  {/* Join Existing Game Option */}
+                  <div
+                    className={`vs-type-card ${matchmakingData.gameType === 'join' ? 'selected' : ''}`}
+                    onClick={() => handleGameTypeSelect('join')}
+                  >
+                    <div className="vs-type-icon-circle">
+                      <i className="fa-solid fa-users"></i>
+                    </div>
+                    <h3 className="vs-type-card-title">Join Existing Game</h3>
+                    <p className="vs-type-card-desc">
+                      Browse open lobbies and drop into an active session. Perfect for jumping straight into the action.
+                    </p>
+                    <button
+                      type="button"
+                      className={`vs-type-btn ${matchmakingData.gameType === 'join' ? 'active-type' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleGameTypeSelect('join');
+                      }}
+                    >
+                      Select Join
+                    </button>
+                  </div>
+                </div>
+
+                <div className="vs-action-footer vs-between">
+                  <button className="vs-back-btn" onClick={() => setWizardStep(1)}>
+                    <i className="fa-solid fa-arrow-left"></i>
+                    <span>Back</span>
+                  </button>
+
                   <button
                     className="vs-continue-btn"
-                    disabled={!selectedSport}
-                    onClick={() => alert(`Selected Sport ID: ${selectedSport}`)}
+                    disabled={!matchmakingData.gameType}
+                    onClick={handleStep2Continue}
                   >
                     <span>Continue</span>
                     <i className="fa-solid fa-arrow-right"></i>
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* STEP 3: ACTION / SUMMARY */}
+            {wizardStep === 3 && (
+              <>
+                <div className="vs-heading-group">
+                  <h2 className="vs-page-title">Match Action Details</h2>
+                  <p className="vs-page-subtitle">
+                    Review your game parameters before submitting to the network.
+                  </p>
+                </div>
+
+                <div className="card vs-summary-card">
+                  <h3 className="vs-summary-title">Recorded Payload Summary</h3>
+                  <div className="vs-summary-grid">
+                    <div className="summary-item">
+                      <span className="summary-label">Selected Sport:</span>
+                      <strong className="summary-value">{matchmakingData.sportName}</strong>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-label">Game Mode / Type:</span>
+                      <strong className="summary-value">
+                        {matchmakingData.gameType === 'host' ? 'Host a Game' : 'Join Existing Game'}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="vs-action-footer vs-between">
+                  <button className="vs-back-btn" onClick={() => setWizardStep(2)}>
+                    <i className="fa-solid fa-arrow-left"></i>
+                    <span>Back</span>
+                  </button>
+
+                  <button
+                    className="vs-continue-btn"
+                    onClick={() => {
+                      alert(`Payload ready to submit:\n${JSON.stringify(matchmakingData, null, 2)}`);
+                    }}
+                  >
+                    <span>Submit Request</span>
+                    <i className="fa-solid fa-paper-plane"></i>
                   </button>
                 </div>
               </>
