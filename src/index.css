@@ -1,9 +1,12 @@
 :root {
-    --primary-color: #0d47a1; /* Dark blue */
+    --primary-color: #0d47a1;
+    /* Dark blue */
     --primary-hover: #1565c0;
-    --secondary-color: #f1f5f9; /* Light grey for secondary actions */
+    --secondary-color: #f1f5f9;
+    /* Light grey for secondary actions */
     --secondary-hover: #e2e8f0;
-    --bg-color: #f8fafc; /* Very light blue/gray tint */
+    --bg-color: #f8fafc;
+    /* Very light blue/gray tint */
     --card-bg: #ffffff;
     --text-main: #1e293b;
     --text-muted: #64748b;
@@ -228,7 +231,9 @@ button:disabled {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .spinner {
@@ -1489,17 +1494,21 @@ body:has(.vs-app-container) {
     .vs-app-container {
         flex-direction: column;
     }
+
     .vs-sidebar {
         width: 100%;
         min-width: 100%;
         padding: 1.5rem;
     }
+
     .vs-main {
         padding: 1.5rem;
     }
+
     .vs-sports-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
     .vs-type-grid {
         grid-template-columns: 1fr;
     }
@@ -1786,8 +1795,8 @@ body:has(.vs-app-container) {
     .vs-host-card {
         padding: 2rem 1.5rem;
     }
+
     .vs-form-row {
         grid-template-columns: 1fr;
     }
 }
-

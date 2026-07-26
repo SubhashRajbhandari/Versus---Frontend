@@ -106,6 +106,28 @@ export default function Dashboard({ user, onLogout }) {
   const [loadingSports, setLoadingSports] = useState(true);
   const [showMoreSports, setShowMoreSports] = useState(false);
 
+  // Venues table state for populating Upcoming Activity venue info
+  const [dbVenues, setDbVenues] = useState([]);
+
+  // Fetch venues from backend /api/venues table
+  useEffect(() => {
+    async function fetchDbVenues() {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || '';
+        const response = await fetch(`${apiUrl}/api/venues`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.venues && data.venues.length > 0) {
+            setDbVenues(data.venues);
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fetch venues for home dashboard:', err);
+      }
+    }
+    fetchDbVenues();
+  }, []);
+
   // Persist matchmaking draft locally whenever it changes
   useEffect(() => {
     localStorage.setItem('vs_matchmaking_draft', JSON.stringify(matchmakingData));
@@ -408,80 +430,111 @@ export default function Dashboard({ user, onLogout }) {
             </section>
 
             {/* Section 2: Upcoming Activity */}
-            <section className="dashboard-section">
-              <h2 className="section-title">Upcoming Activity</h2>
+            {(() => {
+              const hostedGame = (() => {
+                try {
+                  const saved = localStorage.getItem('vs_hosted_game');
+                  return saved ? JSON.parse(saved) : null;
+                } catch {
+                  return null;
+                }
+              })();
 
-              <div className="activity-list">
-                <div className="card activity-card">
-                  <div className="card-top-bar">
-                    <span className="badge badge-success">
-                      <i className="fa-solid fa-check"></i> Accepted
-                    </span>
-                    <span className="card-timestamp">Friday, 6:30 PM</span>
-                  </div>
-                  <h3 className="card-event-title">Tennis Singles - Advanced</h3>
-                  <div className="event-meta">
-                    <span><i className="fa-regular fa-user"></i> Host: Sarah J.</span>
-                    <span><i className="fa-solid fa-location-dot"></i> Venue: Tennis Club</span>
-                  </div>
-                  <div className="card-footer-action">
-                    <button className="outline-btn">
-                      <i className="fa-regular fa-message"></i> Message group
-                    </button>
-                  </div>
-                </div>
+              const tennisVenue = dbVenues.find((v) => (v.name || '').toLowerCase().includes('tennis')) || dbVenues[3] || { name: 'City Center Tennis & Pickleball Courts' };
+              const basketballVenue = dbVenues.find((v) => (v.name || '').toLowerCase().includes('basketball')) || dbVenues[0] || { name: 'Downtown Community Center Court' };
+              const soccerVenue = dbVenues.find((v) => (v.name || '').toLowerCase().includes('soccer') || (v.name || '').toLowerCase().includes('football')) || dbVenues[2] || { name: 'Westside Soccer & Football Turf' };
+              const hostVenue = dbVenues.find((v) => v.id === hostedGame?.venue_id) || dbVenues.find((v) => (v.name || '').toLowerCase().includes('futsal')) || dbVenues[1] || { name: 'National Sports Complex Futsal Arena' };
 
-                <div className="card activity-card">
-                  <div className="card-top-bar">
-                    <span className="badge badge-secondary">
-                      <i className="fa-regular fa-clock"></i> Pending
-                    </span>
-                    <span className="card-timestamp">Saturday, 10:00 AM</span>
-                  </div>
-                  <h3 className="card-event-title">5v5 Basketball Pick-up</h3>
-                  <div className="event-meta">
-                    <span><i className="fa-regular fa-user"></i> Host: Mike R.</span>
-                    <span><i className="fa-solid fa-location-dot"></i> Venue: City Center</span>
-                  </div>
-                </div>
+              return (
+                <section className="dashboard-section">
+                  <h2 className="section-title">Upcoming Activity</h2>
 
-                <div className="card activity-card">
-                  <div className="card-top-bar">
-                    <span className="badge badge-danger-soft">
-                      <i className="fa-solid fa-xmark"></i> Rejected
-                    </span>
-                    <span className="card-timestamp">Sunday, 4:00 PM</span>
-                  </div>
-                  <h3 className="card-event-title">Weekend Soccer Scrimmage</h3>
-                  <div className="event-meta">
-                    <span><i className="fa-regular fa-user"></i> Host: David K.</span>
-                    <span><i className="fa-solid fa-location-dot"></i> Venue: West Park</span>
-                  </div>
-                </div>
+                  <div className="activity-list">
+                    {/* Card 1: Accepted */}
+                    <div className="card activity-card">
+                      <div className="card-top-bar">
+                        <span className="badge badge-success">
+                          <i className="fa-solid fa-check"></i> Accepted
+                        </span>
+                        <span className="card-timestamp">Friday, 6:30 PM</span>
+                      </div>
+                      <h3 className="card-event-title">Tennis Singles - Advanced</h3>
+                      <div className="event-meta">
+                        <span><i className="fa-regular fa-user"></i> Host: Sarah J.</span>
+                        <span><i className="fa-solid fa-location-dot"></i> Venue: {tennisVenue.name}</span>
+                      </div>
+                      <div className="card-footer-action">
+                        <button className="outline-btn">
+                          <i className="fa-regular fa-message"></i> Message group
+                        </button>
+                      </div>
+                    </div>
 
-                <div className="card activity-card">
-                  <div className="card-top-bar">
-                    <span className="badge badge-secondary">
-                      <i className="fa-solid fa-user-gear"></i> Host
-                    </span>
-                    <div className="right-meta">
-                      <span className="card-timestamp">Saturday, 8:00 AM</span>
-                      <span className="players-count">Total Players: 12 <span className="highlight-pending">Pending: 2</span></span>
+                    {/* Card 2: Pending */}
+                    <div className="card activity-card">
+                      <div className="card-top-bar">
+                        <span className="badge badge-secondary">
+                          <i className="fa-regular fa-clock"></i> Pending
+                        </span>
+                        <span className="card-timestamp">Saturday, 10:00 AM</span>
+                      </div>
+                      <h3 className="card-event-title">5v5 Basketball Pick-up</h3>
+                      <div className="event-meta">
+                        <span><i className="fa-regular fa-user"></i> Host: Mike R.</span>
+                        <span><i className="fa-solid fa-location-dot"></i> Venue: {basketballVenue.name}</span>
+                      </div>
+                    </div>
+
+                    {/* Card 3: Rejected */}
+                    <div className="card activity-card">
+                      <div className="card-top-bar">
+                        <span className="badge badge-danger-soft">
+                          <i className="fa-solid fa-xmark"></i> Rejected
+                        </span>
+                        <span className="card-timestamp">Sunday, 4:00 PM</span>
+                      </div>
+                      <h3 className="card-event-title">Weekend Soccer Scrimmage</h3>
+                      <div className="event-meta">
+                        <span><i className="fa-regular fa-user"></i> Host: David K.</span>
+                        <span><i className="fa-solid fa-location-dot"></i> Venue: {soccerVenue.name}</span>
+                      </div>
+                    </div>
+
+                    {/* Card 4: Host Card */}
+                    <div className="card activity-card">
+                      <div className="card-top-bar">
+                        <span className="badge badge-secondary">
+                          <i className="fa-solid fa-user-gear"></i> Host
+                        </span>
+                        <div className="right-meta">
+                          <span className="card-timestamp">
+                            {hostedGame?.start_time ? new Date(hostedGame.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Saturday, 8:00 AM'}
+                          </span>
+                          <span className="players-count">
+                            Total Players: {hostedGame?.max_players || 12}{' '}
+                            <span className="highlight-pending">
+                              Pending: {hostedGame?.max_players ? Math.max(1, hostedGame.max_players - 1) : 2}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                      <h3 className="card-event-title">
+                        {hostedGame?.event_name || 'Saturday Morning Football'}
+                      </h3>
+                      <div className="event-meta">
+                        <span><i className="fa-regular fa-user"></i> Host: {userDisplayName}</span>
+                        <span><i className="fa-solid fa-location-dot"></i> Venue: {hostVenue.name}</span>
+                      </div>
+                      <div className="card-footer-action">
+                        <button className="outline-btn">
+                          <i className="fa-regular fa-message"></i> Message group
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <h3 className="card-event-title">Saturday Morning Football</h3>
-                  <div className="event-meta">
-                    <span><i className="fa-regular fa-user"></i> Host: Alex M.</span>
-                    <span><i className="fa-solid fa-location-dot"></i> Venue: National Stadium</span>
-                  </div>
-                  <div className="card-footer-action">
-                    <button className="outline-btn">
-                      <i className="fa-regular fa-message"></i> Message group
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </section>
+                </section>
+              );
+            })()}
 
             {/* Section 3: Game History */}
             <section className="dashboard-section">

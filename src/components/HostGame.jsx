@@ -47,7 +47,7 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
   const [eventName, setEventName] = useState('');
   const [date, setDate] = useState('2026-08-01');
   const [time, setTime] = useState('10:00');
-  
+
   const [venues, setVenues] = useState([]);
   const [selectedVenueId, setSelectedVenueId] = useState('');
   const [loadingVenues, setLoadingVenues] = useState(true);
