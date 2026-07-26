@@ -16,12 +16,29 @@ export const removeAuthToken = () => {
   localStorage.removeItem('token');
 };
 
+const apiCache = new Map();
+const inFlightRequests = new Map();
+
 /**
  * Custom fetch wrapper that automatically attaches JWT Authorization header.
+ * Deduplicates in-flight requests and caches GET results for lookup endpoints (/api/sports, /api/venues).
  * - For auth (/api/auth) and health (/health) endpoints: sends 'Authorization': ''
  * - For all other endpoints: sends 'Authorization': 'Bearer <token>'
  */
 export async function apiFetch(url, options = {}) {
+  const method = (options.method || 'GET').toUpperCase();
+  const isCacheable = method === 'GET' && (url.includes('/api/sports') || url.includes('/api/venues'));
+
+  if (isCacheable) {
+    if (apiCache.has(url)) {
+      return apiCache.get(url).clone();
+    }
+    if (inFlightRequests.has(url)) {
+      const pendingResponse = await inFlightRequests.get(url);
+      return pendingResponse.clone();
+    }
+  }
+
   const token = getAuthToken();
   const isAuthOrHealth =
     url.includes('/api/auth') || url.includes('/auth') || url.includes('/health');
@@ -33,8 +50,28 @@ export async function apiFetch(url, options = {}) {
     ...options.headers
   };
 
-  return fetch(url, {
-    ...options,
-    headers
-  });
+  const fetchPromise = (async () => {
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers
+      });
+
+      if (isCacheable && response.ok) {
+        apiCache.set(url, response.clone());
+      }
+      return response;
+    } finally {
+      if (isCacheable) {
+        inFlightRequests.delete(url);
+      }
+    }
+  })();
+
+  if (isCacheable) {
+    inFlightRequests.set(url, fetchPromise);
+  }
+
+  const response = await fetchPromise;
+  return response.clone ? response.clone() : response;
 }
