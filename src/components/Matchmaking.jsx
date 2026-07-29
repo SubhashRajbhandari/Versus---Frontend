@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import '../index.css';
+import { apiFetch } from '../utils/api';
 
 // Default list of sports matching the reference UI + additional sports for the "More" section
 const DEFAULT_SPORTS = [
@@ -92,7 +93,7 @@ export default function Matchmaking({ user, onLogout }) {
     async function fetchSports() {
       try {
         const apiUrl = import.meta.env.VITE_API_URL || '';
-        const response = await fetch(`${apiUrl}/api/sports`);
+        const response = await apiFetch(`${apiUrl}/api/sports`);
         if (response.ok) {
           const data = await response.json();
           if (data.sports && data.sports.length > 0) {

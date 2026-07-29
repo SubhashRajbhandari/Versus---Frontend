@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
 import './index.css'; // Vite uses index.css as global
+import { apiFetch, setAuthToken, removeAuthToken, getAuthToken } from './utils/api';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -22,7 +23,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = getAuthToken();
     const savedUser = localStorage.getItem('user');
     if (token) {
       setIsAuthenticated(true);
@@ -37,7 +38,7 @@ function App() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    removeAuthToken();
     localStorage.removeItem('user');
     setIsAuthenticated(false);
     setCurrentUser(null);
@@ -49,7 +50,6 @@ function App() {
     setPassword('');
     setName('');
     setPhone('');
-    setAddress('');
     setDateOfBirth('');
     setErrors({});
     setGlobalMessage({ type: '', text: '' });
@@ -97,7 +97,7 @@ function App() {
 
     try {
       if (action === 'login') {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+        const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
@@ -107,7 +107,7 @@ function App() {
 
         if (response.ok) {
           setGlobalMessage({ type: 'success', text: 'Authentication successful!' });
-          localStorage.setItem('token', data.token);
+          setAuthToken(data.token);
           const loggedUser = data.user || { name: email.split('@')[0], email };
           localStorage.setItem('user', JSON.stringify(loggedUser));
           setCurrentUser(loggedUser);
@@ -126,7 +126,7 @@ function App() {
           preferredSports: [] // Empty by default for now
         };
 
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
+        const response = await apiFetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -136,7 +136,7 @@ function App() {
 
         if (response.ok) {
           setGlobalMessage({ type: 'success', text: 'Registration successful!' });
-          localStorage.setItem('token', data.token);
+          setAuthToken(data.token);
           const registeredUser = data.user || { name: name || email.split('@')[0], email };
           localStorage.setItem('user', JSON.stringify(registeredUser));
           setCurrentUser(registeredUser);

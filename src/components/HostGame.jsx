@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import '../index.css';
+import { apiFetch } from '../utils/api';
 
 // Criteria matrix from attached image for specific included sports (Maximum limit caps)
 const getPlayerBoundsForSport = (sportName) => {
@@ -47,7 +48,7 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
   const [eventName, setEventName] = useState('');
   const [date, setDate] = useState('2026-08-01');
   const [time, setTime] = useState('10:00');
-  
+
   const [venues, setVenues] = useState([]);
   const [selectedVenueId, setSelectedVenueId] = useState('');
   const [loadingVenues, setLoadingVenues] = useState(true);
@@ -71,7 +72,7 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
     async function fetchSportFromTable() {
       try {
         const apiUrl = import.meta.env.VITE_API_URL || '';
-        const response = await fetch(`${apiUrl}/api/sports`);
+        const response = await apiFetch(`${apiUrl}/api/sports`);
         if (response.ok) {
           const data = await response.json();
           if (data.sports && data.sports.length > 0) {
@@ -104,7 +105,7 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
         const targetSportId = localStorageSportId || resolvedSportId || initialSportId;
 
         const apiUrl = import.meta.env.VITE_API_URL || '';
-        const response = await fetch(`${apiUrl}/api/venues?sport_id=${targetSportId}`);
+        const response = await apiFetch(`${apiUrl}/api/venues?sport_id=${targetSportId}`);
         let fetchedList = DEFAULT_VENUES;
         if (response.ok) {
           const data = await response.json();
@@ -195,7 +196,7 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
       localStorage.setItem('userPreference', 'host_a_game');
 
       const apiUrl = import.meta.env.VITE_API_URL || '';
-      const response = await fetch(`${apiUrl}/api/matches/host`, {
+      const response = await apiFetch(`${apiUrl}/api/matches/host`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
