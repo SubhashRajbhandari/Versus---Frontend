@@ -19,6 +19,12 @@ export const removeAuthToken = () => {
 const apiCache = new Map();
 const inFlightRequests = new Map();
 
+export const clearAuthSession = () => {
+  localStorage.clear();
+  apiCache.clear();
+  inFlightRequests.clear();
+};
+
 /**
  * Custom fetch wrapper that automatically attaches JWT Authorization header.
  * Deduplicates in-flight requests and caches GET results for lookup endpoints (/api/sports, /api/venues).
