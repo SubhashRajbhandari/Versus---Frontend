@@ -105,6 +105,10 @@ function Auth({ onLoginSuccess }) {
     setGlobalMessage({ type: '', text: '' });
   };
 
+  useEffect(() => {
+    resetForm();
+  }, []);
+
   const validate = () => {
     let isValid = true;
     const newErrors = {};

@@ -16,6 +16,11 @@ export const removeAuthToken = () => {
   localStorage.removeItem('token');
 };
 
+export const clearAuthSession = () => {
+  localStorage.clear();
+  apiCache.clear();
+};
+
 const apiCache = new Map();
 const inFlightRequests = new Map();
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
 import Auth from './components/Auth';
 import './index.css'; // Vite uses index.css as global
-import { removeAuthToken, getAuthToken } from './utils/api';
+import { clearAuthSession, getAuthToken } from './utils/api';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -24,8 +24,7 @@ function App() {
   }, []);
 
   const handleLogout = () => {
-    removeAuthToken();
-    localStorage.removeItem('user');
+    clearAuthSession();
     setIsAuthenticated(false);
     setCurrentUser(null);
   };
