@@ -16,13 +16,14 @@ export const removeAuthToken = () => {
   localStorage.removeItem('token');
 };
 
+const apiCache = new Map();
+const inFlightRequests = new Map();
+
 export const clearAuthSession = () => {
   localStorage.clear();
   apiCache.clear();
+  inFlightRequests.clear();
 };
-
-const apiCache = new Map();
-const inFlightRequests = new Map();
 
 /**
  * Custom fetch wrapper that automatically attaches JWT Authorization header.

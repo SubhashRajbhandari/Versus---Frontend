@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { apiFetch, setAuthToken } from '../utils/api';
 
 const DEFAULT_SPORTS = [
