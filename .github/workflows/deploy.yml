@@ -1,13 +1,7 @@
 name: Frontend CI/CD Pipeline
 
 on:
-  # Triggered when Pull Request is merged into dev
-  pull_request:
-    types: [closed]
-    branches:
-      - dev
-
-  # Triggered automatically when code is pushed/merged into dev
+  # Triggered automatically when code is merged/pushed into dev
   push:
     branches:
       - dev
@@ -28,7 +22,7 @@ on:
 jobs:
   # ---------------------------------------------------------------
   # Deployment Job
-  # - Dev: Auto-deploys when a PR is merged into dev (or pushed to dev) 
+  # - Dev: Auto-deploys when code is merged into dev
   # - Test / Production: Deploys manually via workflow_dispatch
   # ---------------------------------------------------------------
   deploy:
@@ -37,12 +31,6 @@ jobs:
       (
         github.event_name == 'push' &&
         github.ref_name == 'dev'
-      ) ||
-      (
-        github.event_name == 'pull_request' &&
-        github.event.action == 'closed' &&
-        github.event.pull_request.merged == true &&
-        github.event.pull_request.base.ref == 'dev'
       )
     name: Build & Deploy to Environment
     runs-on: ubuntu-latest
@@ -54,7 +42,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Install Dependencies
@@ -65,8 +53,6 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             TARGET="${{ inputs.target_environment }}"
-          elif [ "${{ github.event_name }}" = "pull_request" ]; then
-            TARGET="${{ github.base_ref }}"
           else
             TARGET="${{ github.ref_name }}"
           fi
