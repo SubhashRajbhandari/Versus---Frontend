@@ -67,9 +67,13 @@ const renderSportIcon = (sportName) => {
   return <i className="fa-solid fa-trophy sport-tile-icon"></i>;
 };
 
-function Auth({ onLoginSuccess }) {
-  const [isLogin, setIsLogin] = useState(true);
+function Auth({ onLoginSuccess, initialIsLogin = true, onBack }) {
+  const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    setIsLogin(initialIsLogin);
+  }, [initialIsLogin]);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -213,6 +217,11 @@ function Auth({ onLoginSuccess }) {
     return (
       <div className="login-container">
         <div className="login-card">
+          {onBack && (
+            <button type="button" className="auth-back-link" onClick={onBack}>
+              <i className="fa-solid fa-arrow-left"></i> Back to Home
+            </button>
+          )}
           <h1 className="title">Welcome Back</h1>
           <p className="subtitle">Log in to your Versus account.</p>
 
@@ -319,6 +328,11 @@ function Auth({ onLoginSuccess }) {
 
       {/* Right Form Content */}
       <div className="auth-form-content">
+        {onBack && (
+          <button type="button" className="auth-back-link" onClick={onBack}>
+            <i className="fa-solid fa-arrow-left"></i> Back to Home
+          </button>
+        )}
         <div className="auth-form-header">
           <h2>Build Your Profile</h2>
           <p>Step 1 of 2: Basic details & sports interests.</p>
