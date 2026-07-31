@@ -33,7 +33,7 @@ export const clearAuthSession = () => {
  */
 export async function apiFetch(url, options = {}) {
   const method = (options.method || 'GET').toUpperCase();
-  const isCacheable = method === 'GET' && (url.includes('/api/sports') || url.includes('/api/venues'));
+  const isCacheable = method === 'GET' && ((url.includes('/api/sports') && !url.includes('/preferred')) || url.includes('/api/venues'));
 
   if (isCacheable) {
     if (apiCache.has(url)) {

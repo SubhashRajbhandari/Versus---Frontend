@@ -1,53 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../index.css';
 import { apiFetch } from '../utils/api';
-
-// Default list of sports matching the reference UI + additional sports for the "More" section
-const DEFAULT_SPORTS = [
-  { id: '1e11188f-fb25-461c-947b-309cba3a9a8d', name: 'Football', icon: 'fa-football', category: 'Team Sport' },
-  { id: '70f40861-d81b-46c5-b4dd-a2f28993b796', name: 'Futsal', icon: 'fa-futbol', category: 'Team Sport' },
-  { id: 'ac7433be-1583-4452-9381-8b236d50d342', name: 'Cricket', icon: 'fa-person-running', category: 'Team Sport' },
-  { id: '2b319d51-1305-4fd6-a233-1f7fd3f1572d', name: 'Volleyball', icon: 'fa-volleyball', category: 'Team Sport' },
-  { id: '287dae3a-cf4e-43dd-b842-e232cc378c36', name: 'Basketball', icon: 'fa-basketball', category: 'Court Sport' },
-  { id: 'c9569279-8525-434d-9f0f-c15b209f445b', name: 'Badminton', icon: 'fa-table-tennis-paddle-ball', category: 'Racket Sport' },
-  { id: 'a8df83d3-aef2-41e3-8e85-b53b20642ac5', name: 'Table Tennis', icon: 'fa-gamepad', category: 'Indoor Sport' },
-  { id: '19d46582-4167-449d-9f25-0801b74a6463', name: 'Tennis', icon: 'fa-table-tennis-paddle-ball', category: 'Racket Sport' },
-  { id: 'ffc9b1ca-c13f-4aaf-b755-672fe529adda', name: 'Pickleball', icon: 'fa-table-tennis-paddle-ball', category: 'Racket Sport' },
-  { id: '1bf69367-2277-4c13-90f3-404ec48327bb', name: 'Padel', icon: 'fa-table-tennis-paddle-ball', category: 'Racket Sport' },
-  { id: '8780b1f5-b7d0-48af-8566-0fd7e919ff2d', name: 'Mountain Biking', icon: 'fa-bicycle', category: 'Outdoor' },
-  { id: 'c58af691-a1ec-4fe9-8858-8d2a6057dd59', name: 'Cycling', icon: 'fa-bicycle', category: 'Outdoor' },
-  { id: '061f4a17-d150-46aa-af00-d76270ec1e3e', name: 'Sport Climbing', icon: 'fa-mountain', category: 'Outdoor' },
-  { id: 'bbeb7919-d697-4362-9808-a209f2229a9d', name: 'Bouldering', icon: 'fa-mountain', category: 'Outdoor' },
-  { id: '2e08838c-a072-4f89-a6c6-39661c8b6f3f', name: 'Skateboarding', icon: 'fa-person-skating', category: 'Urban Sport' },
-  { id: '4ba3e146-7d44-4ab5-a571-807148692777', name: 'Inline Freestyle Skating', icon: 'fa-person-skating', category: 'Urban Sport' },
-  { id: '4e9d926d-37bc-48a0-86fb-3455bb6934cb', name: 'White Water Rafting', icon: 'fa-water', category: 'Water Sport' },
-  { id: '45dffec8-4e14-454b-860d-c078e984a420', name: 'Kayaking', icon: 'fa-water', category: 'Water Sport' },
-  { id: '7b202a92-0361-4d6b-aa81-ed302fda94f8', name: 'Trail Running', icon: 'fa-person-running', category: 'Outdoor' },
-  { id: '382aff40-8012-4c30-803b-dc0f03879778', name: 'Hiking', icon: 'fa-person-hiking', category: 'Outdoor' }
-];
-
-const SPORTS_JSON_MAP = {
-  'football': '1e11188f-fb25-461c-947b-309cba3a9a8d',
-  'futsal': '70f40861-d81b-46c5-b4dd-a2f28993b796',
-  'cricket': 'ac7433be-1583-4452-9381-8b236d50d342',
-  'volleyball': '2b319d51-1305-4fd6-a233-1f7fd3f1572d',
-  'basketball': '287dae3a-cf4e-43dd-b842-e232cc378c36',
-  'badminton': 'c9569279-8525-434d-9f0f-c15b209f445b',
-  'table tennis': 'a8df83d3-aef2-41e3-8e85-b53b20642ac5',
-  'tennis': '19d46582-4167-449d-9f25-0801b74a6463',
-  'pickleball': 'ffc9b1ca-c13f-4aaf-b755-672fe529adda',
-  'padel': '1bf69367-2277-4c13-90f3-404ec48327bb',
-  'mountain biking': '8780b1f5-b7d0-48af-8566-0fd7e919ff2d',
-  'cycling': 'c58af691-a1ec-4fe9-8858-8d2a6057dd59',
-  'sport climbing': '061f4a17-d150-46aa-af00-d76270ec1e3e',
-  'bouldering': 'bbeb7919-d697-4362-9808-a209f2229a9d',
-  'skateboarding': '2e08838c-a072-4f89-a6c6-39661c8b6f3f',
-  'inline freestyle skating': '4ba3e146-7d44-4ab5-a571-807148692777',
-  'white water rafting': '4e9d926d-37bc-48a0-86fb-3455bb6934cb',
-  'kayaking': '45dffec8-4e14-454b-860d-c078e984a420',
-  'trail running': '7b202a92-0361-4d6b-aa81-ed302fda94f8',
-  'hiking': '382aff40-8012-4c30-803b-dc0f03879778'
-};
+import { DEFAULT_SPORTS } from './Auth';
 
 // Helper to map sport names from backend API to FontAwesome icons
 const getSportIcon = (name) => {
@@ -75,7 +29,8 @@ const getSportIcon = (name) => {
 };
 
 export default function Matchmaking({ user, onLogout }) {
-  const [sports, setSports] = useState([]);
+  const [primarySports, setPrimarySports] = useState([]);
+  const [secondarySports, setSecondarySports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMore, setShowMore] = useState(false);
   const [selectedSport, setSelectedSport] = useState(() => {
@@ -91,36 +46,71 @@ export default function Matchmaking({ user, onLogout }) {
 
   useEffect(() => {
     async function fetchSports() {
+      const defaultSportsFormatted = DEFAULT_SPORTS.map((s) => ({
+        id: s.id,
+        name: s.name,
+        icon: s.icon || getSportIcon(s.name)
+      }));
+
       try {
         const apiUrl = import.meta.env.VITE_API_URL || '';
-        const response = await apiFetch(`${apiUrl}/api/sports`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.sports && data.sports.length > 0) {
-            const formatted = data.sports.map((s) => ({
-              id: s.id || SPORTS_JSON_MAP[s.name.toLowerCase()],
+        
+        // Fetch preferred sports & all available sports concurrently
+        const [preferredRes, allRes] = await Promise.allSettled([
+          apiFetch(`${apiUrl}/api/sports/preferred`),
+          apiFetch(`${apiUrl}/api/sports`)
+        ]);
+
+        let preferredList = [];
+        if (preferredRes.status === 'fulfilled' && preferredRes.value.ok) {
+          const prefData = await preferredRes.value.json();
+          if (prefData.preferredSports && prefData.preferredSports.length > 0) {
+            preferredList = prefData.preferredSports.map((s) => ({
+              id: s.sportId || s.id,
               name: s.name,
               icon: getSportIcon(s.name)
             }));
-            // If less than 8 returned from backend API, supplement with defaults
-            if (formatted.length < 8) {
-              const names = new Set(formatted.map((item) => item.name.toLowerCase()));
-              const extraDefaults = DEFAULT_SPORTS.filter(
-                (item) => !names.has(item.name.toLowerCase())
-              );
-              setSports([...formatted, ...extraDefaults]);
-            } else {
-              setSports(formatted);
-            }
-          } else {
-            setSports(DEFAULT_SPORTS);
+          }
+        }
+
+        let allList = [];
+        if (allRes.status === 'fulfilled' && allRes.value.ok) {
+          const allData = await allRes.value.json();
+          if (allData.sports && allData.sports.length > 0) {
+            allList = allData.sports.map((s) => ({
+              id: s.id,
+              name: s.name,
+              icon: getSportIcon(s.name)
+            }));
+          }
+        }
+
+        if (allList.length === 0) {
+          allList = defaultSportsFormatted;
+        }
+
+        if (preferredList.length > 0) {
+          const preferredIds = new Set(preferredList.map((p) => p.id));
+          const preferredNames = new Set(preferredList.map((p) => p.name.toLowerCase()));
+
+          const remaining = allList.filter(
+            (s) => !preferredIds.has(s.id) && !preferredNames.has(s.name.toLowerCase())
+          );
+
+          setPrimarySports(preferredList);
+          setSecondarySports(remaining);
+
+          if (preferredList[0]?.id && !localStorage.getItem('gameId')) {
+            setSelectedSport(preferredList[0].id);
           }
         } else {
-          setSports(DEFAULT_SPORTS);
+          setPrimarySports(allList.slice(0, 8));
+          setSecondarySports(allList.slice(8));
         }
       } catch (err) {
         console.warn('Could not fetch sports from API, using defaults:', err);
-        setSports(DEFAULT_SPORTS);
+        setPrimarySports(defaultSportsFormatted.slice(0, 8));
+        setSecondarySports(defaultSportsFormatted.slice(8));
       } finally {
         setLoading(false);
       }
@@ -128,10 +118,6 @@ export default function Matchmaking({ user, onLogout }) {
 
     fetchSports();
   }, []);
-
-  // Display 8 sports in the primary grid, remaining in the "More" section
-  const primarySports = sports.slice(0, 8);
-  const secondarySports = sports.slice(8);
 
   const userDisplayName = user?.name || user?.email?.split('@')[0] || 'John Doe';
   const userInitials = userDisplayName
@@ -237,9 +223,9 @@ export default function Matchmaking({ user, onLogout }) {
 
           {/* Sports Grid */}
           {loading ? (
-            <div className="vs-loading">
-              <i className="spinner vs-spinner"></i>
-              <p>Loading sports...</p>
+            <div className="vs-loading-container">
+              <div className="vs-loading-spinner"></div>
+              <span className="vs-loading-text">Loading sports...</span>
             </div>
           ) : (
             <>
