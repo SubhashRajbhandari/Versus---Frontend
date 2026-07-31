@@ -3,7 +3,7 @@ import Dashboard from './components/Dashboard';
 import Auth from './components/Auth';
 import LandingPage from './components/LandingPage';
 import './index.css'; // Vite uses index.css as global
-import { clearAuthSession, getAuthToken } from './utils/api';
+import { clearAuthSession, getAuthToken, prefetchUserSports } from './utils/api';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -15,6 +15,7 @@ function App() {
     const savedUser = localStorage.getItem('user');
     if (token) {
       setIsAuthenticated(true);
+      prefetchUserSports();
       if (savedUser) {
         try {
           setCurrentUser(JSON.parse(savedUser));
@@ -36,6 +37,7 @@ function App() {
     setCurrentUser(user);
     setIsAuthenticated(true);
     setAuthMode(null);
+    prefetchUserSports();
   };
 
   if (isAuthenticated) {

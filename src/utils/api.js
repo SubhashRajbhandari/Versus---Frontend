@@ -21,9 +21,37 @@ const inFlightRequests = new Map();
 
 export const clearAuthSession = () => {
   localStorage.clear();
+  sessionStorage.removeItem('vs_preferred_sports_cache');
+  sessionStorage.removeItem('vs_all_sports_cache');
   apiCache.clear();
   inFlightRequests.clear();
 };
+
+export async function prefetchUserSports() {
+  const token = getAuthToken();
+  if (!token) return;
+  const apiUrl = import.meta.env.VITE_API_URL || '';
+  try {
+    const [prefRes, allRes] = await Promise.allSettled([
+      apiFetch(`${apiUrl}/api/sports/preferred`),
+      apiFetch(`${apiUrl}/api/sports`)
+    ]);
+    if (prefRes.status === 'fulfilled' && prefRes.value.ok) {
+      const prefData = await prefRes.value.json();
+      if (prefData.preferredSports) {
+        sessionStorage.setItem('vs_preferred_sports_cache', JSON.stringify(prefData.preferredSports));
+      }
+    }
+    if (allRes.status === 'fulfilled' && allRes.value.ok) {
+      const allData = await allRes.value.json();
+      if (allData.sports) {
+        sessionStorage.setItem('vs_all_sports_cache', JSON.stringify(allData.sports));
+      }
+    }
+  } catch (err) {
+    console.warn('Background prefetch for sports failed silently:', err);
+  }
+}
 
 /**
  * Custom fetch wrapper that automatically attaches JWT Authorization header.
@@ -33,7 +61,7 @@ export const clearAuthSession = () => {
  */
 export async function apiFetch(url, options = {}) {
   const method = (options.method || 'GET').toUpperCase();
-  const isCacheable = method === 'GET' && ((url.includes('/api/sports') && !url.includes('/preferred')) || url.includes('/api/venues'));
+  const isCacheable = method === 'GET' && (url.includes('/api/sports') || url.includes('/api/venues'));
 
   if (isCacheable) {
     if (apiCache.has(url)) {

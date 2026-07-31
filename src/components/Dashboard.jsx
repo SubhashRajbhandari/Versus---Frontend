@@ -108,6 +108,41 @@ export default function Dashboard({ user, onLogout }) {
         icon: s.icon || getSportIcon(s.name)
       }));
 
+      // Check if background prefetch data exists in sessionStorage for instant load (0ms delay)
+      try {
+        const cachedPref = sessionStorage.getItem('vs_preferred_sports_cache');
+        const cachedAll = sessionStorage.getItem('vs_all_sports_cache');
+        if (cachedPref && cachedAll) {
+          const prefData = JSON.parse(cachedPref);
+          const allData = JSON.parse(cachedAll);
+
+          const preferredList = prefData.map((s) => ({
+            id: s.sportId || s.id,
+            name: s.name,
+            icon: getSportIcon(s.name)
+          }));
+
+          const allList = allData.map((s) => ({
+            id: s.id,
+            name: s.name,
+            icon: getSportIcon(s.name)
+          }));
+
+          const preferredIds = new Set(preferredList.map((p) => p.id));
+          const preferredNames = new Set(preferredList.map((p) => p.name.toLowerCase()));
+          const remaining = allList.filter(
+            (s) => !preferredIds.has(s.id) && !preferredNames.has(s.name.toLowerCase())
+          );
+
+          setPrimarySports(preferredList);
+          setSecondarySports(remaining);
+          setSports([...preferredList, ...remaining]);
+          setLoadingSports(false);
+        }
+      } catch {
+        // Fallthrough to API fetch if cache parse fails
+      }
+
       try {
         const apiUrl = import.meta.env.VITE_API_URL || '';
         
@@ -121,6 +156,7 @@ export default function Dashboard({ user, onLogout }) {
         if (preferredRes.status === 'fulfilled' && preferredRes.value.ok) {
           const prefData = await preferredRes.value.json();
           if (prefData.preferredSports && prefData.preferredSports.length > 0) {
+            sessionStorage.setItem('vs_preferred_sports_cache', JSON.stringify(prefData.preferredSports));
             preferredList = prefData.preferredSports.map((s) => ({
               id: s.sportId || s.id,
               name: s.name,
@@ -133,6 +169,7 @@ export default function Dashboard({ user, onLogout }) {
         if (allRes.status === 'fulfilled' && allRes.value.ok) {
           const allData = await allRes.value.json();
           if (allData.sports && allData.sports.length > 0) {
+            sessionStorage.setItem('vs_all_sports_cache', JSON.stringify(allData.sports));
             allList = allData.sports.map((s) => ({
               id: s.id,
               name: s.name,
@@ -163,9 +200,11 @@ export default function Dashboard({ user, onLogout }) {
         }
       } catch (err) {
         console.warn('Could not fetch sports from API, using defaults:', err);
-        setPrimarySports(defaultSportsFormatted.slice(0, 8));
-        setSecondarySports(defaultSportsFormatted.slice(8));
-        setSports(defaultSportsFormatted);
+        if (!sessionStorage.getItem('vs_preferred_sports_cache')) {
+          setPrimarySports(defaultSportsFormatted.slice(0, 8));
+          setSecondarySports(defaultSportsFormatted.slice(8));
+          setSports(defaultSportsFormatted);
+        }
       } finally {
         setLoadingSports(false);
       }
