@@ -1,9 +1,12 @@
 :root {
-    --primary-color: #0d47a1; /* Dark blue */
+    --primary-color: #0d47a1;
+    /* Dark blue */
     --primary-hover: #1565c0;
-    --secondary-color: #f1f5f9; /* Light grey for secondary actions */
+    --secondary-color: #f1f5f9;
+    /* Light grey for secondary actions */
     --secondary-hover: #e2e8f0;
-    --bg-color: #f8fafc; /* Very light blue/gray tint */
+    --bg-color: #f8fafc;
+    /* Very light blue/gray tint */
     --card-bg: #ffffff;
     --text-main: #1e293b;
     --text-muted: #64748b;
@@ -228,7 +231,9 @@ button:disabled {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .spinner {
@@ -239,4 +244,2372 @@ button:disabled {
     height: 1rem;
     animation: spin 1s linear infinite;
     display: inline-block;
+}
+
+.large-spinner {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-width: 3px;
+    border-top-color: #00F2FE;
+    border-right-color: transparent;
+}
+
+/* ==========================================================================
+   Versus Application Layout & Matchmaking Wizard (Reference UI Specs)
+   ========================================================================== */
+
+/* Full view container reset */
+body:has(.vs-app-container),
+body:has(.landing-page) {
+    display: block;
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+    background-color: #F8FAFC;
+    color: #1E293B;
+}
+
+.vs-app-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #FFFFFF;
+}
+
+/* --- Dark Sidebar Navigation (Left) --- */
+.vs-sidebar {
+    width: 260px;
+    min-width: 260px;
+    background-color: #0A1128;
+    color: #F8FAFC;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2rem 1.25rem 1.5rem 1.25rem;
+}
+
+.vs-brand {
+    padding-left: 0.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.vs-brand-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+}
+
+.vs-brand-sub {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #64748B;
+    display: block;
+    margin-top: 0.2rem;
+}
+
+.vs-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.vs-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    color: #94A3B8;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.vs-nav-icon {
+    font-size: 1.1rem;
+    width: 22px;
+    text-align: center;
+}
+
+/* Activated Matchmaking Menu Pill (Mint / Emerald Green) */
+.vs-nav-item.active {
+    background-color: #D1FADF;
+    color: #064E3B;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(209, 250, 223, 0.15);
+}
+
+.vs-nav-item.active .vs-nav-icon {
+    color: #064E3B;
+}
+
+.vs-nav-item.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.vs-sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 1.25rem;
+}
+
+.vs-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: rgba(239, 68, 68, 0.1);
+    color: #F87171;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.vs-logout-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+}
+
+/* --- Main Content Area (Right) --- */
+.vs-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #FFFFFF;
+    padding: 1.75rem 3.5rem;
+    overflow-y: auto;
+}
+
+/* Top Header Bar */
+.vs-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 2rem;
+}
+
+.vs-top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.vs-icon-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    background: #F1F5F9;
+    border: none;
+    border-radius: 50%;
+    color: #475569;
+    font-size: 1.1rem;
+    position: relative;
+    cursor: pointer;
+}
+
+.vs-unread-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background-color: #EF4444;
+    border-radius: 50%;
+    border: 2px solid #FFFFFF;
+}
+
+.vs-user-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.vs-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #A7F3D0;
+    color: #064E3B;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vs-user-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1E293B;
+}
+
+/* Wizard Container */
+.vs-wizard-container {
+    max-width: 1050px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Stepper Bar --- */
+.vs-stepper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 3.5rem;
+    padding: 0 1rem;
+}
+
+.vs-stepper-track {
+    position: absolute;
+    top: 18px;
+    left: 40px;
+    right: 40px;
+    height: 3px;
+    background-color: #E2E8F0;
+    z-index: 1;
+}
+
+.vs-stepper-progress {
+    height: 100%;
+    width: 25%;
+    background-color: #059669;
+}
+
+.vs-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 2;
+}
+
+.vs-step-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: #FFFFFF;
+    border: 2px solid #CBD5E1;
+    color: #64748B;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 4px #FFFFFF;
+}
+
+.vs-step.active .vs-step-circle {
+    background-color: #059669;
+    border-color: #059669;
+    color: #FFFFFF;
+}
+
+.vs-step.completed .vs-step-circle {
+    background-color: #059669;
+    border-color: #059669;
+    color: #FFFFFF;
+}
+
+.vs-step-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #94A3B8;
+}
+
+.vs-step.active .vs-step-label,
+.vs-step.completed .vs-step-label {
+    color: #1E293B;
+    font-weight: 700;
+}
+
+/* Heading Group */
+.vs-heading-group {
+    margin-bottom: 2.25rem;
+}
+
+.vs-page-title {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: #1E293B;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.4rem;
+}
+
+.vs-page-subtitle {
+    font-size: 1rem;
+    color: #64748B;
+}
+
+.vs-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem;
+    gap: 1rem;
+    color: #64748B;
+}
+
+/* --- Sports Grid (4 columns x 2 rows = 8 cards) --- */
+.vs-sports-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+.vs-sport-card {
+    background-color: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 2.25rem 1.25rem 1.75rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    user-select: none;
+}
+
+.vs-sport-card:hover {
+    border-color: #CBD5E1;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+.vs-card-icon-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: #EEF2FF;
+    color: #4F46E5;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.vs-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1E293B;
+    text-align: center;
+    transition: color 0.2s ease;
+}
+
+/* --- Selected Card State (Exact Match to Image) --- */
+.vs-sport-card.selected {
+    border: 2px solid #059669;
+    box-shadow: 0 0 0 1px #059669, 0 8px 24px rgba(5, 150, 105, 0.12);
+}
+
+.vs-sport-card.selected .vs-card-icon-circle {
+    background-color: #52E0A4;
+    color: #064E3B;
+}
+
+.vs-sport-card.selected .vs-card-title {
+    color: #059669;
+}
+
+/* --- More Sports Section --- */
+.vs-more-sports {
+    margin-top: 2rem;
+}
+
+.vs-more-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #F8FAFC;
+    border: 1px stroke #E2E8F0;
+    border-radius: 10px;
+    color: #059669;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background 0.2s ease;
+}
+
+.vs-more-btn:hover {
+    background-color: #ECFDF5;
+}
+
+.vs-more-grid {
+    margin-top: 1.25rem;
+    animation: fadeIn 0.3s ease;
+}
+
+/* --- Continue Action Footer --- */
+.vs-action-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 3.5rem;
+    padding-bottom: 2rem;
+}
+
+.vs-continue-btn {
+    width: auto;
+    padding: 0.85rem 2.25rem;
+    background-color: #047857;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(4, 120, 87, 0.25);
+}
+
+.vs-continue-btn:hover:not(:disabled) {
+    background-color: #065F46;
+    box-shadow: 0 6px 16px rgba(4, 120, 87, 0.35);
+    transform: translateY(-1px);
+}
+
+.vs-continue-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* --- Top Bar Header Layout */
+.vs-top-bar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    gap: 1.5rem;
+}
+
+.header-greeting h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #1E293B;
+    margin-bottom: 0.2rem;
+}
+
+.header-subtitle {
+    font-size: 0.9rem;
+    color: #64748B;
+}
+
+.header-center {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+}
+
+/* Start Playing Button (Green Highlight) */
+.start-playing-btn {
+    width: auto;
+    padding: 0.75rem 1.75rem;
+    background-color: #059669;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25);
+    transition: all 0.2s ease;
+}
+
+.start-playing-btn:hover {
+    background-color: #047857;
+    box-shadow: 0 6px 18px rgba(5, 150, 105, 0.35);
+    transform: translateY(-1px);
+}
+
+.btn-icon-left {
+    font-size: 1rem;
+}
+
+.ml-auto {
+    margin-left: auto;
+}
+
+/* Profile Dropdown Wrapper */
+.profile-menu-wrapper {
+    position: relative;
+}
+
+.vs-user-badge-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #F1F5F9;
+    border: 1px solid #E2E8F0;
+    padding: 0.35rem 0.85rem 0.35rem 0.35rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.vs-user-badge-btn:hover {
+    background: #E2E8F0;
+}
+
+.vs-chevron {
+    font-size: 0.75rem;
+    color: #64748B;
+    transition: transform 0.2s ease;
+}
+
+.vs-chevron.open {
+    transform: rotate(180deg);
+}
+
+.profile-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 290px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 0 20px 48px rgba(0, 0, 0, 0.05);
+    padding: 1.25rem;
+    z-index: 100;
+    animation: fadeIn 0.2s ease;
+}
+
+.profile-dropdown-header {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.avatar-circle-lg {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background-color: #A7F3D0;
+    color: #064E3B;
+    font-weight: 800;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.profile-dropdown-divider {
+    height: 1px;
+    background-color: #E2E8F0;
+    margin: 1rem 0;
+}
+
+.profile-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.825rem;
+    color: #475569;
+}
+
+.detail-icon {
+    font-size: 0.85rem;
+    color: #059669;
+    width: 16px;
+    text-align: center;
+}
+
+.dropdown-logout-btn {
+    width: 100%;
+    padding: 0.65rem;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background 0.2s ease;
+}
+
+.dropdown-logout-btn:hover {
+    background-color: rgba(239, 68, 68, 0.2);
+}
+
+/* Home Dashboard Content Layout */
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+    max-width: 1100px;
+}
+
+.dashboard-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1E293B;
+}
+
+.card {
+    background-color: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 1.5rem;
+}
+
+/* Action Card */
+.action-card {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    border-left: 4px solid #EF4444;
+}
+
+.card-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.3rem 0.65rem;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.badge-danger {
+    background-color: #FEE2E2;
+    color: #DC2626;
+}
+
+.badge-success {
+    background-color: #D1FADF;
+    color: #065F46;
+}
+
+.badge-secondary {
+    background-color: #F1F5F9;
+    color: #475569;
+}
+
+.badge-danger-soft {
+    background-color: #FEF2F2;
+    color: #EF4444;
+}
+
+.card-timestamp {
+    font-size: 0.8rem;
+    color: #64748B;
+    font-weight: 600;
+}
+
+.card-event-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1E293B;
+    margin-bottom: 0.35rem;
+}
+
+.card-event-venue {
+    font-size: 0.875rem;
+    color: #64748B;
+    margin-bottom: 1.25rem;
+}
+
+.applicant-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+}
+
+.applicant-info {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.applicant-avatar {
+    font-size: 2rem;
+    color: #64748B;
+}
+
+.applicant-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1E293B;
+}
+
+.applicant-rating {
+    font-size: 0.775rem;
+    color: #64748B;
+}
+
+.applicant-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.action-btn-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.action-btn-circle:hover {
+    transform: scale(1.08);
+}
+
+.reject-btn {
+    background-color: #FEE2E2;
+    color: #DC2626;
+}
+
+.accept-btn {
+    background-color: #D1FADF;
+    color: #065F46;
+}
+
+/* Activity List */
+.activity-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+}
+
+.activity-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.event-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.825rem;
+    color: #64748B;
+}
+
+.card-footer-action {
+    margin-top: 0.5rem;
+}
+
+.outline-btn {
+    width: auto;
+    padding: 0.45rem 0.9rem;
+    background: transparent;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.outline-btn:hover {
+    background: #F1F5F9;
+}
+
+.right-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+}
+
+.players-count {
+    font-size: 0.75rem;
+    color: #64748B;
+}
+
+.highlight-pending {
+    color: #D97706;
+    font-weight: 700;
+}
+
+/* History Table */
+.history-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.875rem;
+}
+
+.history-table th {
+    background-color: #F8FAFC;
+    color: #64748B;
+    margin-bottom: 0.85rem;
+}
+
+.badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.3rem 0.65rem;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.badge-danger {
+    background-color: #FEE2E2;
+    color: #DC2626;
+}
+
+.badge-success {
+    background-color: #D1FADF;
+    color: #065F46;
+}
+
+.badge-secondary {
+    background-color: #F1F5F9;
+    color: #475569;
+}
+
+.badge-danger-soft {
+    background-color: #FEF2F2;
+    color: #EF4444;
+}
+
+.card-timestamp {
+    font-size: 0.8rem;
+    color: #64748B;
+    font-weight: 600;
+}
+
+.card-event-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1E293B;
+    margin-bottom: 0.35rem;
+}
+
+.card-event-venue {
+    font-size: 0.875rem;
+    color: #64748B;
+    margin-bottom: 1.25rem;
+}
+
+.applicant-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+}
+
+.applicant-info {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.applicant-avatar {
+    font-size: 2rem;
+    color: #64748B;
+}
+
+.applicant-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1E293B;
+}
+
+.applicant-rating {
+    font-size: 0.775rem;
+    color: #64748B;
+}
+
+.applicant-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.action-btn-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.action-btn-circle:hover {
+    transform: scale(1.08);
+}
+
+.reject-btn {
+    background-color: #FEE2E2;
+    color: #DC2626;
+}
+
+.accept-btn {
+    background-color: #D1FADF;
+    color: #065F46;
+}
+
+/* Activity List */
+.activity-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+}
+
+.activity-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.event-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.825rem;
+    color: #64748B;
+}
+
+.card-footer-action {
+    margin-top: 0.5rem;
+}
+
+.outline-btn {
+    width: auto;
+    padding: 0.45rem 0.9rem;
+    background: transparent;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.outline-btn:hover {
+    background: #F1F5F9;
+}
+
+.right-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+}
+
+.players-count {
+    font-size: 0.75rem;
+    color: #64748B;
+}
+
+.highlight-pending {
+    color: #D97706;
+    font-weight: 700;
+}
+
+/* History Table */
+.history-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.875rem;
+}
+
+.history-table th {
+    background-color: #F8FAFC;
+    color: #64748B;
+    font-weight: 700;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.history-table td {
+    padding: 1rem 1.5rem;
+    color: #1E293B;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.history-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* ==========================================================================
+   Step 2: Type Selection Cards (Host vs Join Game) & Wizard Navigation
+   ========================================================================== */
+.vs-section-subhead {
+    margin-bottom: 1.75rem;
+}
+
+.vs-section-subhead h3 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1E293B;
+}
+
+.vs-type-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.vs-type-card {
+    background: #FFFFFF;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 3rem 2rem 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.25rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    user-select: none;
+}
+
+.vs-type-card:hover {
+    border-color: #CBD5E1;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+}
+
+.vs-type-card.selected {
+    border: 2px solid #059669;
+    box-shadow: 0 0 0 1px #059669, 0 12px 30px rgba(5, 150, 105, 0.15);
+    background: linear-gradient(180deg, #FFFFFF 0%, #F4FBF7 100%);
+}
+
+.vs-type-icon-circle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: #EEF2FF;
+    color: #4F46E5;
+    font-size: 1.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.vs-type-card.selected .vs-type-icon-circle {
+    background-color: #52E0A4;
+    color: #064E3B;
+}
+
+.vs-type-card-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #1E293B;
+}
+
+.vs-type-card.selected .vs-type-card-title {
+    color: #059669;
+}
+
+.vs-type-card-desc {
+    font-size: 0.925rem;
+    color: #64748B;
+    line-height: 1.5;
+    max-width: 360px;
+    margin-bottom: 0.5rem;
+}
+
+.vs-type-btn {
+    width: auto;
+    padding: 0.65rem 1.75rem;
+    background: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 10px;
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vs-type-card:hover .vs-type-btn {
+    border-color: #059669;
+    color: #059669;
+}
+
+.vs-type-btn.active-type,
+.vs-type-card.selected .vs-type-btn {
+    background: #059669;
+    border-color: #059669;
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+}
+
+.vs-action-footer.vs-between {
+    justify-content: space-between;
+}
+
+.vs-back-btn {
+    width: auto;
+    padding: 0.85rem 1.5rem;
+    background: transparent;
+    border: 1px solid #CBD5E1;
+    border-radius: 10px;
+    color: #475569;
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vs-back-btn:hover {
+    background: #F1F5F9;
+    color: #1E293B;
+}
+
+/* Step 3 Payload Summary Card */
+.vs-summary-card {
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.vs-summary-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1E293B;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.vs-summary-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.95rem;
+}
+
+.summary-label {
+    color: #64748B;
+}
+
+.summary-value {
+    color: #059669;
+    font-weight: 700;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1100px) {
+    .vs-sports-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 850px) {
+    .vs-app-container {
+        flex-direction: column;
+    }
+
+    .vs-sidebar {
+        width: 100%;
+        min-width: 100%;
+        padding: 1.5rem;
+    }
+
+    .vs-main {
+        padding: 1.5rem;
+    }
+
+    .vs-sports-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .vs-type-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+    .vs-sports-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   Host a Game Page Styles (Matching Mockup Image 1)
+   ========================================================================== */
+.vs-host-page-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding-top: 1rem;
+    padding-bottom: 3rem;
+}
+
+.vs-host-page-title {
+    font-size: 2.35rem;
+    font-weight: 800;
+    color: #1E293B;
+    margin-bottom: 2rem;
+    letter-spacing: -0.02em;
+}
+
+.vs-host-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 3rem 3.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.vs-host-card-header {
+    margin-bottom: 2.25rem;
+}
+
+.vs-host-card-title {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #1E293B;
+    margin-bottom: 0.5rem;
+}
+
+.vs-host-card-subtitle {
+    font-size: 0.95rem;
+    color: #64748B;
+    line-height: 1.5;
+}
+
+.vs-host-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+.vs-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.vs-form-group label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin-bottom: 0;
+}
+
+.vs-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.vs-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.vs-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 1rem;
+    background: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #1E293B;
+    transition: all 0.2s ease;
+}
+
+.vs-input:focus {
+    outline: none;
+    border-color: #4F46E5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.vs-input-has-icon {
+    padding-left: 2.75rem;
+}
+
+.vs-input-icon-left {
+    position: absolute;
+    left: 1rem;
+    color: #64748B;
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+.vs-input-icon-right {
+    position: absolute;
+    right: 1rem;
+    color: #94A3B8;
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+.vs-select {
+    appearance: none;
+    cursor: pointer;
+    padding-right: 2.75rem;
+}
+
+.vs-field-caption {
+    font-size: 0.825rem;
+    color: #64748B;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.25rem;
+}
+
+/* Players Needed Blue Control Box */
+.vs-players-box {
+    background: #EEF2FF;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.vs-players-label {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #475569;
+}
+
+.vs-players-counter {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.vs-counter-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background: #CBD5E1;
+    border: none;
+    color: #1E293B;
+    font-size: 1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vs-counter-btn:hover:not(:disabled) {
+    background: #94A3B8;
+    color: #FFFFFF;
+}
+
+.vs-counter-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.vs-counter-value {
+    width: 64px;
+    height: 42px;
+    background: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #1E293B;
+}
+
+.vs-players-bounds-hint {
+    font-size: 0.775rem;
+    color: #64748B;
+}
+
+/* Form Actions */
+.vs-host-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #F1F5F9;
+}
+
+.vs-host-cancel-btn {
+    background: transparent;
+    border: none;
+    color: #475569;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0.75rem 1.25rem;
+    transition: color 0.2s ease;
+}
+
+.vs-host-cancel-btn:hover {
+    color: #0F172A;
+}
+
+.vs-host-submit-btn {
+    background: #293548;
+    color: #FFFFFF;
+    padding: 0.85rem 2rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(41, 53, 72, 0.2);
+    transition: all 0.2s ease;
+}
+
+.vs-host-submit-btn:hover:not(:disabled) {
+    background: #1E293B;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(30, 41, 59, 0.3);
+}
+
+.vs-host-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Alerts */
+.vs-alert {
+    padding: 0.9rem 1.25rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.vs-alert-error {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #FCA5A5;
+}
+
+.vs-alert-success {
+    background: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #6EE7B7;
+}
+
+@media (max-width: 650px) {
+    .vs-host-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .vs-form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   Split Signup Layout & Sports Selection Grid
+   ========================================================================== */
+.auth-split-container {
+    width: 100%;
+    max-width: 960px;
+    display: flex;
+    background-color: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin: 1.5rem auto;
+}
+
+.auth-hero-sidebar {
+    width: 340px;
+    min-width: 320px;
+    background: linear-gradient(135deg, #0a192f 0%, #1e3a8a 50%, #0d47a1 100%);
+    color: #ffffff;
+    padding: 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-hero-sidebar::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+}
+
+.auth-hero-brand h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.75rem;
+}
+
+.auth-hero-brand p {
+    font-size: 0.95rem;
+    color: #93c5fd;
+    line-height: 1.5;
+}
+
+.auth-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 30px;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    width: fit-content;
+    margin-top: 2rem;
+}
+
+.auth-hero-badge i {
+    color: #4ade80;
+}
+
+.auth-form-content {
+    flex: 1;
+    padding: 2.5rem 3rem;
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+.auth-form-header {
+    margin-bottom: 1.75rem;
+}
+
+.auth-form-header h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.35rem;
+}
+
+.auth-form-header p {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.form-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.25rem;
+}
+
+.form-grid-full {
+    grid-column: 1 / -1;
+}
+
+/* Sports Selection Grid */
+.sports-select-section {
+    margin-top: 1.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.sports-select-header {
+    margin-bottom: 1rem;
+}
+
+.sports-select-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.2rem;
+}
+
+.sports-select-header p {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.sports-select-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.85rem;
+}
+
+.sport-tile {
+    background-color: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    position: relative;
+}
+
+.sport-tile:hover {
+    border-color: #94a3b8;
+    background-color: #f8fafc;
+    transform: translateY(-1px);
+}
+
+.sport-tile.selected {
+    border-color: #0d47a1;
+    background-color: #eff6ff;
+    box-shadow: 0 0 0 1px #0d47a1;
+}
+
+.sport-tile-icon {
+    font-size: 1.35rem;
+    color: #475569;
+    transition: color 0.2s ease;
+}
+
+.sport-tile.selected .sport-tile-icon {
+    color: #0d47a1;
+}
+
+.sport-tile-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.sport-tile.selected .sport-tile-name {
+    color: #0d47a1;
+    font-weight: 700;
+}
+
+.sport-tile-check {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 0.75rem;
+    color: #0d47a1;
+}
+
+.auth-footer-link {
+    text-align: center;
+    margin-top: 1.25rem;
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.auth-footer-link button {
+    background: none;
+    border: none;
+    color: #0d47a1;
+    font-weight: 700;
+    font-size: inherit;
+    cursor: pointer;
+    padding: 0 0.25rem;
+    width: auto;
+    display: inline;
+}
+
+.auth-footer-link button:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 820px) {
+    .auth-split-container {
+        flex-direction: column;
+        max-width: 520px;
+    }
+    .auth-hero-sidebar {
+        width: 100%;
+        min-width: 100%;
+        padding: 2rem;
+    }
+    .auth-form-content {
+        padding: 2rem 1.5rem;
+    }
+    .form-grid-2col {
+        grid-template-columns: 1fr;
+    }
+    .sports-select-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ==========================================================================
+   Landing Page Styles (Versus)
+   ========================================================================== */
+
+.landing-page {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #F8FAFC;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Header */
+.landing-header {
+    width: 100%;
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E2E8F0;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.landing-header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.landing-logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1E3A8A;
+    letter-spacing: -0.5px;
+}
+
+.landing-nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.landing-btn-login {
+    background: transparent;
+    border: none;
+    color: #1E3A8A;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    width: auto;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.landing-btn-login:hover {
+    background-color: #F1F5F9;
+}
+
+.landing-btn-signup {
+    background-color: #1E3A8A;
+    color: #FFFFFF;
+    border: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.55rem 1.5rem;
+    border-radius: 24px;
+    cursor: pointer;
+    width: auto;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+}
+
+.landing-btn-signup:hover {
+    background-color: #1D4ED8;
+    transform: translateY(-1px);
+}
+
+/* Hero Section */
+.landing-hero {
+    padding: 4.5rem 1.5rem 3.5rem 1.5rem;
+    text-align: center;
+    background: radial-gradient(circle at 50% 30%, rgba(224, 242, 254, 0.4) 0%, rgba(248, 250, 252, 0) 70%);
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 3.25rem;
+    font-weight: 800;
+    color: #0F172A;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    margin-bottom: 1.25rem;
+}
+
+.hero-subtitle {
+    font-size: 1.05rem;
+    color: #475569;
+    line-height: 1.6;
+    max-width: 680px;
+    margin: 0 auto 2.5rem auto;
+}
+
+/* Search Bar Pill */
+.hero-search-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.hero-search-bar {
+    width: 100%;
+    max-width: 600px;
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 50px;
+    padding: 6px 6px 6px 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-search-bar:focus-within {
+    border-color: #1E3A8A;
+    box-shadow: 0 10px 30px rgba(30, 58, 138, 0.12), 0 0 0 3px rgba(30, 58, 138, 0.15);
+}
+
+.search-icon {
+    color: #64748B;
+    font-size: 1.1rem;
+}
+
+.hero-search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.95rem;
+    color: #0F172A;
+    padding: 0.5rem 0;
+}
+
+.hero-search-input::placeholder {
+    color: #94A3B8;
+}
+
+.hero-search-btn {
+    width: auto;
+    background-color: #1E3A8A;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 30px;
+    padding: 0.65rem 1.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.hero-search-btn:hover {
+    background-color: #1D4ED8;
+}
+
+/* Landing Section */
+.landing-section {
+    padding: 3rem 1.5rem;
+}
+
+.section-container {
+    max-width: 1140px;
+    margin: 0 auto;
+}
+
+.section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.section-header.text-center {
+    display: block;
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.section-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #0F172A;
+    letter-spacing: -0.5px;
+}
+
+.section-subtitle {
+    font-size: 0.95rem;
+    color: #64748B;
+    margin-top: 0.35rem;
+}
+
+.section-link {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1E3A8A;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.2s ease;
+}
+
+.section-link:hover {
+    color: #1D4ED8;
+}
+
+/* Sports Grid */
+.sports-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+.landing-sport-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 20px;
+    padding: 2.25rem 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+}
+
+.landing-sport-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
+    border-color: #CBD5E1;
+}
+
+.sport-icon-badge {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 1.25rem;
+}
+
+.badge-blue {
+    background-color: #E0F2FE;
+    color: #0284C7;
+}
+
+.badge-green {
+    background-color: #DCFCE7;
+    color: #16A34A;
+}
+
+.badge-beige {
+    background-color: #FEF3C7;
+    color: #D97706;
+}
+
+.sport-card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 0.3rem;
+}
+
+.sport-card-meta {
+    font-size: 0.85rem;
+    color: #64748B;
+}
+
+/* Matches Grid */
+.matches-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.landing-match-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 20px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.landing-match-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+}
+
+.match-card-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.match-icon-circle {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.match-title-group {
+    flex: 1;
+}
+
+.match-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 0.35rem;
+}
+
+.match-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: 12px;
+}
+
+.tag-blue {
+    background-color: #E0F2FE;
+    color: #0369A1;
+}
+
+.tag-green {
+    background-color: #DCFCE7;
+    color: #15803D;
+}
+
+.match-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem 0;
+    border-top: 1px solid #F1F5F9;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.match-detail-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: #64748B;
+    font-size: 0.88rem;
+}
+
+.match-detail-row i {
+    width: 16px;
+    color: #94A3B8;
+    text-align: center;
+}
+
+.match-card-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.avatar-group {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #FFFFFF;
+    margin-left: -8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar:first-child {
+    margin-left: 0;
+}
+
+.avatar-blue { background-color: #3B82F6; }
+.avatar-darkblue { background-color: #1D4ED8; }
+.avatar-teal { background-color: #14B8A6; }
+.avatar-green { background-color: #22C55E; }
+.avatar-more { background-color: #E2E8F0; color: #475569; }
+
+.match-action-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.spots-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.spots-green { color: #16A34A; }
+.spots-red { color: #DC2626; }
+
+.match-join-btn {
+    width: auto;
+    background-color: #1E3A8A;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 20px;
+    padding: 0.45rem 1.35rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.match-join-btn:hover {
+    background-color: #1D4ED8;
+}
+
+.load-more-wrapper {
+    text-align: center;
+    margin-top: 2.5rem;
+}
+
+.load-more-btn {
+    width: auto;
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    color: #1E3A8A;
+    border-radius: 30px;
+    padding: 0.65rem 2rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.load-more-btn:hover {
+    background-color: #F8FAFC;
+    border-color: #94A3B8;
+}
+
+/* Footer */
+.landing-footer {
+    background-color: #DBEAFE;
+    padding: 2.5rem 1.5rem;
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.footer-container p {
+    color: #334155;
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+
+/* Auth Back Link Button */
+.auth-back-link {
+    background: transparent;
+    border: none;
+    color: #1E3A8A;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0;
+    margin-bottom: 1.25rem;
+    width: auto;
+    transition: color 0.2s ease;
+}
+
+.auth-back-link:hover {
+    color: #1D4ED8;
+    text-decoration: underline;
+}
+
+/* Landing Responsive Breakpoints */
+@media (max-width: 992px) {
+    .sports-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .matches-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .hero-title {
+        font-size: 2.25rem;
+    }
+    .sports-grid-4 {
+        grid-template-columns: 1fr;
+    }
+    .landing-header-container {
+        padding: 0.85rem 1rem;
+    }
+    .hero-search-bar {
+        padding: 4px 4px 4px 1rem;
+    }
+    .hero-search-btn {
+        padding: 0.55rem 1.25rem;
+    }
+}
+
+/* ==========================================================================
+   Premium Loading Spinner
+   ========================================================================== */
+.vs-loading-container,
+.vs-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3.5rem 2rem;
+    min-height: 240px;
+    gap: 1.25rem;
+}
+
+.vs-loading-spinner,
+.vs-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(79, 70, 229, 0.15);
+    border-top-color: #4F46E5;
+    border-right-color: #6366F1;
+    border-radius: 50%;
+    animation: vs-spin 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+    box-shadow: 0 0 16px rgba(79, 70, 229, 0.2);
+}
+
+@keyframes vs-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.vs-loading-text,
+.vs-loading p {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #64748B;
+    letter-spacing: 0.02em;
+    animation: vs-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes vs-pulse {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
 }
