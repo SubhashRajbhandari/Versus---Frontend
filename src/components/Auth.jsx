@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { apiFetch, setAuthToken } from '../utils/api';
 
-const DEFAULT_SPORTS = [
-  { id: 'badminton', name: 'Badminton' },
-  { id: 'pickleball', name: 'Pickleball' },
-  { id: 'basketball', name: 'Basketball' },
-  { id: 'football', name: 'Football' },
-  { id: 'futsal', name: 'Futsal' },
-  { id: 'volleyball', name: 'Volleyball' },
-  { id: 'tennis', name: 'Tennis' },
-  { id: 'table-tennis', name: 'Table Tennis' },
-  { id: 'running', name: 'Running' }
+export const DEFAULT_SPORTS = [
+  { id: 'c9569279-8525-434d-9f0f-c15b209f445b', name: 'Badminton' },
+  { id: 'ffc9b1ca-c13f-4aaf-b755-672fe529adda', name: 'Pickleball' },
+  { id: '287dae3a-cf4e-43dd-b842-e232cc378c36', name: 'Basketball' },
+  { id: '1e11188f-fb25-461c-947b-309cba3a9a8d', name: 'Football' },
+  { id: '70f40861-d81b-46c5-b4dd-a2f28993b796', name: 'Futsal' },
+  { id: '2b319d51-1305-4fd6-a233-1f7fd3f1572d', name: 'Volleyball' },
+  { id: '19d46582-4167-449d-9f25-0801b74a6463', name: 'Tennis' },
+  { id: 'a8df83d3-aef2-41e3-8e85-b53b20642ac5', name: 'Table Tennis' },
+  { id: '7b202a92-0361-4d6b-aa81-ed302fda94f8', name: 'Running' }
 ];
 
 const renderSportIcon = (sportName) => {
@@ -67,9 +67,13 @@ const renderSportIcon = (sportName) => {
   return <i className="fa-solid fa-trophy sport-tile-icon"></i>;
 };
 
-function Auth({ onLoginSuccess }) {
-  const [isLogin, setIsLogin] = useState(true);
+function Auth({ onLoginSuccess, initialIsLogin = true, onBack }) {
+  const [isLogin, setIsLogin] = useState(initialIsLogin);
   const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    setIsLogin(initialIsLogin);
+  }, [initialIsLogin]);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -213,6 +217,11 @@ function Auth({ onLoginSuccess }) {
     return (
       <div className="login-container">
         <div className="login-card">
+          {onBack && (
+            <button type="button" className="auth-back-link" onClick={onBack}>
+              <i className="fa-solid fa-arrow-left"></i> Back to Home
+            </button>
+          )}
           <h1 className="title">Welcome Back</h1>
           <p className="subtitle">Log in to your Versus account.</p>
 
@@ -319,6 +328,11 @@ function Auth({ onLoginSuccess }) {
 
       {/* Right Form Content */}
       <div className="auth-form-content">
+        {onBack && (
+          <button type="button" className="auth-back-link" onClick={onBack}>
+            <i className="fa-solid fa-arrow-left"></i> Back to Home
+          </button>
+        )}
         <div className="auth-form-header">
           <h2>Build Your Profile</h2>
           <p>Step 1 of 2: Basic details & sports interests.</p>
