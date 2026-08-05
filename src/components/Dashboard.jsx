@@ -145,7 +145,7 @@ export default function Dashboard({ user, onLogout }) {
 
       try {
         const apiUrl = import.meta.env.VITE_API_URL || '';
-        
+
         // Fetch preferred sports & all available sports concurrently
         const [preferredRes, allRes] = await Promise.allSettled([
           apiFetch(`${apiUrl}/api/sports/preferred`),
@@ -756,7 +756,7 @@ export default function Dashboard({ user, onLogout }) {
                         handleGameTypeSelect('host');
                       }}
                     >
-                      Select Host
+                      Host Game
                     </button>
                   </div>
 
@@ -780,7 +780,7 @@ export default function Dashboard({ user, onLogout }) {
                         handleGameTypeSelect('join');
                       }}
                     >
-                      Select Join
+                      Join Game
                     </button>
                   </div>
                 </div>
