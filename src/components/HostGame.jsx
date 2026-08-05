@@ -1,143 +1,139 @@
 import { useState, useEffect } from 'react';
 import '../index.css';
 import { apiFetch } from '../utils/api';
+import LoadingOverlay from './LoadingOverlay';
 
-// Criteria matrix from attached image for specific included sports (Maximum limit caps)
+// Criteria matrix for sport maximum limit caps
 const getPlayerBoundsForSport = (sportName) => {
   const name = (sportName || '').toLowerCase();
-  if (name.includes('badminton')) return { max: 4, defaultVal: 4 };
-  if (name.includes('pickleball')) return { max: 4, defaultVal: 4 };
-  if (name.includes('basketball')) return { max: 10, defaultVal: 10 };
-  if (name.includes('futsal')) return { max: 10, defaultVal: 10 };
-  if (name.includes('football') || name.includes('soccer')) return { max: 22, defaultVal: 22 };
-  if (name.includes('table tennis') || name.includes('ping pong')) return { max: 4, defaultVal: 4 };
-  if (name.includes('tennis')) return { max: 4, defaultVal: 4 };
-  if (name.includes('volleyball')) return { max: 12, defaultVal: 12 };
-  if (name.includes('running') || name.includes('hiking')) return { max: 30, defaultVal: 10 };
+  if (name.includes('badminton')) return { max: 6, defaultVal: 4 };
+  if (name.includes('pickleball')) return { max: 6, defaultVal: 4 };
+  if (name.includes('basketball')) return { max: 15, defaultVal: 10 };
+  if (name.includes('futsal')) return { max: 15, defaultVal: 10 };
+  if (name.includes('football') || name.includes('soccer')) return { max: 30, defaultVal: 22 };
+  if (name.includes('table tennis') || name.includes('ping pong')) return { max: 6, defaultVal: 4 };
+  if (name.includes('tennis')) return { max: 6, defaultVal: 4 };
+  if (name.includes('volleyball')) return { max: 18, defaultVal: 12 };
+  if (name.includes('running') || name.includes('hiking')) return { max: 100, defaultVal: 10 };
   return { max: 20, defaultVal: 10 };
 };
 
-// Fallback default venues sorted by sport_id column if backend is unavailable
-const DEFAULT_VENUES = [
-  { id: '9a21b3c4-1111-4222-8333-555555555551', name: 'National Sports Complex Futsal Arena', address: '456 Stadium Way, Kathmandu', sport_id: '70f40861-d81b-46c5-b4dd-a2f28993b796' },
-  { id: '9a21b3c4-1111-4222-8333-555555555552', name: 'Westside Futsal & Turf Center', address: '789 Park Ave, Lalitpur', sport_id: '70f40861-d81b-46c5-b4dd-a2f28993b796' },
-  { id: '9a21b3c4-1111-4222-8333-555555555553', name: 'Apex Futsal Club', address: '101 Arena Way, Bhaktapur', sport_id: '70f40861-d81b-46c5-b4dd-a2f28993b796' },
-  { id: '9a21b3c4-1111-4222-8333-555555555554', name: 'Downtown Community Center Basketball Court', address: '123 Main St, Downtown', sport_id: '287dae3a-cf4e-43dd-b842-e232cc378c36' },
-  { id: '9a21b3c4-1111-4222-8333-555555555555', name: 'Metro Basketball Arena', address: '88 Hoop St, City Center', sport_id: '287dae3a-cf4e-43dd-b842-e232cc378c36' },
-  { id: '9a21b3c4-1111-4222-8333-555555555556', name: 'Westside Soccer & Football Turf', address: '789 Park Ave, Westside', sport_id: '1e11188f-fb25-461c-947b-309cba3a9a8d' },
-  { id: '9a21b3c4-1111-4222-8333-555555555557', name: 'Apex Indoor Badminton Club', address: '321 Sports Center Dr', sport_id: 'c9569279-8525-434d-9f0f-c15b209f445b' },
-  { id: '9a21b3c4-1111-4222-8333-555555555558', name: 'City Center Tennis & Pickleball Courts', address: '654 Grand Ave', sport_id: '19d46582-4167-449d-9f25-0801b74a6463' },
-  { id: '9a21b3c4-1111-4222-8333-555555555559', name: 'Valley Volleyball Dome', address: '987 Valley Rd', sport_id: '2b319d51-1305-4fd6-a233-1f7fd3f1572d' }
-];
-
-// Strictly match sportId from local storage / selected sport with venue table's sport_id column
-const filterVenuesForSport = (venuesList, targetSportId) => {
-  if (!venuesList || venuesList.length === 0 || !targetSportId) return [];
-
-  return venuesList.filter(
-    (v) => v.sport_id && String(v.sport_id).toLowerCase() === String(targetSportId).toLowerCase()
-  );
-};
-
 export default function HostGame({ user, selectedSport, onCancel, onSuccess, onLogout }) {
-  const sportName = selectedSport?.name || 'Basketball';
-  const initialSportId = selectedSport?.id || '287dae3a-cf4e-43dd-b842-e232cc378c36';
+  // Sports state
+  const [sports, setSports] = useState([]);
+  const [loadingSports, setLoadingSports] = useState(true);
+  const [selectedSportId, setSelectedSportId] = useState(selectedSport?.id || '');
+  const [selectedSportName, setSelectedSportName] = useState(selectedSport?.name || '');
 
-  const playerBounds = getPlayerBoundsForSport(sportName);
+  // Helper to format today's local date as YYYY-MM-DD for min date restriction
+  const getTodayDateString = () => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
+  const minDateStr = getTodayDateString();
+
+  // Form states
   const [eventName, setEventName] = useState('');
-  const [date, setDate] = useState('2026-08-01');
-  const [time, setTime] = useState('10:00');
+  
+  // Default date to today's date formatted as YYYY-MM-DD
+  const [date, setDate] = useState(minDateStr);
+  const [time, setTime] = useState('18:00');
 
+  // Venues state
   const [venues, setVenues] = useState([]);
   const [selectedVenueId, setSelectedVenueId] = useState('');
-  const [loadingVenues, setLoadingVenues] = useState(true);
+  const [loadingVenues, setLoadingVenues] = useState(false);
 
-  // Resolved sport_id from tallying sports table
-  const [resolvedSportId, setResolvedSportId] = useState(initialSportId);
-
+  // Player count bounds
+  const playerBounds = getPlayerBoundsForSport(selectedSportName);
   const [playersNeeded, setPlayersNeeded] = useState(playerBounds.defaultVal);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Update bounds when sport changes
+  // 1. Fetch available sports from /api/sports
   useEffect(() => {
-    const bounds = getPlayerBoundsForSport(sportName);
-    setPlayersNeeded(bounds.defaultVal);
-  }, [sportName]);
-
-  // Tally sport ID from table named sports
-  useEffect(() => {
-    async function fetchSportFromTable() {
+    async function fetchSports() {
       try {
+        setLoadingSports(true);
         const apiUrl = import.meta.env.VITE_API_URL || '';
         const response = await apiFetch(`${apiUrl}/api/sports`);
         if (response.ok) {
           const data = await response.json();
           if (data.sports && data.sports.length > 0) {
-            // Find ID of selected sport in step 1 of matchmaking page by tallying name
-            const match = data.sports.find(
-              (s) =>
-                s.name.toLowerCase() === sportName.toLowerCase() ||
-                s.id === initialSportId
+            setSports(data.sports);
+            
+            // If no initial sport is selected or invalid, default to matching or first sport from API
+            let current = data.sports.find(
+              (s) => s.id === selectedSportId || s.name.toLowerCase() === selectedSportName.toLowerCase()
             );
-            if (match) {
-              setResolvedSportId(match.id);
+            if (!current) {
+              current = data.sports[0];
             }
+            setSelectedSportId(current.id);
+            setSelectedSportName(current.name);
+            const bounds = getPlayerBoundsForSport(current.name);
+            setPlayersNeeded(bounds.defaultVal);
           }
         }
       } catch (err) {
-        console.warn('Could not tally sport ID from sports table:', err);
+        console.warn('Could not fetch sports from /api/sports:', err);
+      } finally {
+        setLoadingSports(false);
       }
     }
 
-    fetchSportFromTable();
-  }, [sportName, initialSportId]);
+    fetchSports();
+  }, []);
 
-  // Retrieve venues matching sportId from local storage and sport_id column in venue table
+  // 2. Fetch venues matching the selected sport ID from /api/venues?sport_ids=<sport_id>
   useEffect(() => {
+    if (!selectedSportId) return;
+
     async function fetchVenues() {
       try {
         setLoadingVenues(true);
-        // Priority: local storage 'sportId' / 'gameId', resolvedSportId, initialSportId
-        const localStorageSportId = localStorage.getItem('sportId') || localStorage.getItem('gameId');
-        const targetSportId = localStorageSportId || resolvedSportId || initialSportId;
-
         const apiUrl = import.meta.env.VITE_API_URL || '';
-        const response = await apiFetch(`${apiUrl}/api/venues?sport_id=${targetSportId}`);
-        let fetchedList = DEFAULT_VENUES;
+        const response = await apiFetch(`${apiUrl}/api/venues?sport_ids=${selectedSportId}`);
         if (response.ok) {
           const data = await response.json();
-          if (data.venues && data.venues.length > 0) {
-            fetchedList = data.venues;
+          const fetchedVenues = data.venues || [];
+          setVenues(fetchedVenues);
+          if (fetchedVenues.length > 0) {
+            setSelectedVenueId(fetchedVenues[0].id);
+          } else {
+            setSelectedVenueId('');
           }
-        }
-        const relevantVenues = filterVenuesForSport(fetchedList, targetSportId);
-        setVenues(relevantVenues);
-        if (relevantVenues.length > 0) {
-          setSelectedVenueId(relevantVenues[0].id);
         } else {
+          setVenues([]);
           setSelectedVenueId('');
         }
       } catch (err) {
-        console.warn('Could not fetch venues from API, filtering default venues:', err);
-        const localStorageSportId = localStorage.getItem('sportId') || localStorage.getItem('gameId');
-        const targetSportId = localStorageSportId || resolvedSportId || initialSportId;
-        const relevantVenues = filterVenuesForSport(DEFAULT_VENUES, targetSportId);
-        setVenues(relevantVenues);
-        if (relevantVenues.length > 0) {
-          setSelectedVenueId(relevantVenues[0].id);
-        } else {
-          setSelectedVenueId('');
-        }
+        console.error('Could not fetch venues for sport ID:', err);
+        setVenues([]);
+        setSelectedVenueId('');
       } finally {
         setLoadingVenues(false);
       }
     }
 
     fetchVenues();
-  }, [sportName, resolvedSportId, initialSportId]);
+  }, [selectedSportId]);
+
+  // Handle Sport dropdown change
+  const handleSportChange = (sportId) => {
+    setSelectedSportId(sportId);
+    const foundSport = sports.find((s) => s.id === sportId);
+    const newSportName = foundSport ? foundSport.name : '';
+    setSelectedSportName(newSportName);
+    const bounds = getPlayerBoundsForSport(newSportName);
+    setPlayersNeeded(bounds.defaultVal);
+  };
 
   const handleDecrement = () => {
     if (playersNeeded > 1) {
@@ -151,6 +147,7 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
     }
   };
 
+  // 3. Submit hosted game to /api/matches/host
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
@@ -161,38 +158,42 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
       return;
     }
 
+    const finalEventName = eventName.trim() || `${selectedSportName || 'Pickup'} Match`;
+    if (finalEventName.length < 5 || finalEventName.length > 50) {
+      setErrorMessage('Event Name must be between 5 and 50 characters long.');
+      return;
+    }
+
+    if (date < minDateStr) {
+      setErrorMessage('Date cannot be in the past. Please select current date or a future date.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // Build ISO start time and scheduled date
+      // Format start_time as ISO string and scheduled_date as YYYY-MM-DD string
       const startTimeIso = new Date(`${date}T${time}:00`).toISOString();
-      const scheduledDateIso = new Date(`${date}T00:00:00.000Z`).toISOString();
-
-      // Retrieve user's member ID from user object or local storage fallback
       const hostMemberId =
         user?.member_id ||
         user?.memberId ||
         user?.id ||
         'd3b07384-d113-460a-4c91-000000000001';
 
-      const finalSportId = resolvedSportId || initialSportId;
-
-      // Payload specification
       const payload = {
-        host_member_id: hostMemberId,
+        event_name: finalEventName,
+        sport_id: selectedSportId,
         venue_id: selectedVenueId,
-        sport_id: finalSportId,
         start_time: startTimeIso,
-        max_players: playersNeeded,
-        status: 'open',
-        scheduled_date: scheduledDateIso,
-        event_name: eventName || `Pick-up ${sportName}`
+        scheduled_date: date,
+        max_players: Number(playersNeeded),
+        host_member_id: hostMemberId
       };
 
-      // Record in localstorage
+      // Store in local storage for session reference
       localStorage.setItem('vs_hosted_game', JSON.stringify(payload));
-      localStorage.setItem('gameId', finalSportId);
-      localStorage.setItem('sportId', finalSportId);
+      localStorage.setItem('gameId', selectedSportId);
+      localStorage.setItem('sportId', selectedSportId);
       localStorage.setItem('userPreference', 'host_a_game');
 
       const apiUrl = import.meta.env.VITE_API_URL || '';
@@ -289,7 +290,17 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
         <div className="vs-host-page-container">
           <h1 className="vs-host-page-title">Host a Game</h1>
 
-          <div className="vs-host-card">
+          <div className="vs-host-card" style={{ position: 'relative' }}>
+            <LoadingOverlay
+              isLoading={loadingSports || loadingVenues || isSubmitting}
+              message={
+                isSubmitting
+                  ? 'Hosting match...'
+                  : loadingSports
+                  ? 'Loading sports...'
+                  : 'Loading venues...'
+              }
+            />
             <div className="vs-host-card-header">
               <h2 className="vs-host-card-title">Create New Game</h2>
               <p className="vs-host-card-subtitle">
@@ -308,11 +319,36 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
                   <input
                     type="text"
                     id="eventName"
-                    placeholder="e.g., Saturday Morning Pick-up"
+                    placeholder="e.g., Friday Badminton Clash"
                     value={eventName}
                     onChange={(e) => setEventName(e.target.value)}
                     className="vs-input"
                   />
+                </div>
+              </div>
+
+              {/* Sport Selection */}
+              <div className="vs-form-group">
+                <label htmlFor="eventSport">Sport</label>
+                <div className="vs-input-wrapper">
+                  <i className="fa-solid fa-trophy vs-input-icon-left"></i>
+                  <select
+                    id="eventSport"
+                    value={selectedSportId}
+                    onChange={(e) => handleSportChange(e.target.value)}
+                    className="vs-input vs-input-has-icon vs-select"
+                    required
+                  >
+                    {loadingSports ? (
+                      <option value="">Loading sports...</option>
+                    ) : (
+                      sports.map((sport) => (
+                        <option key={sport.id} value={sport.id}>
+                          {sport.name}
+                        </option>
+                      ))
+                    )}
+                  </select>
                 </div>
               </div>
 
@@ -325,6 +361,7 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
                     <input
                       type="date"
                       id="eventDate"
+                      min={minDateStr}
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
                       className="vs-input vs-input-has-icon"
@@ -403,13 +440,13 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
                     className="vs-counter-btn"
                     onClick={handleIncrement}
                     disabled={playersNeeded >= playerBounds.max}
-                    title={`Maximum for ${sportName}: ${playerBounds.max}`}
+                    title={`Maximum for ${selectedSportName}: ${playerBounds.max}`}
                   >
                     <i className="fa-solid fa-plus"></i>
                   </button>
                 </div>
                 <span className="vs-players-bounds-hint">
-                  {sportName} maximum limit: {playerBounds.max} players
+                  {selectedSportName} maximum limit: {playerBounds.max} players
                 </span>
               </div>
 
@@ -440,3 +477,4 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
     </div>
   );
 }
+
