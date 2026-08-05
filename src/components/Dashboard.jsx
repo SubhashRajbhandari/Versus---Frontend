@@ -64,26 +64,7 @@ export default function Dashboard({ user, onLogout }) {
   const [showMoreSports, setShowMoreSports] = useState(false);
 
   // Venues table state for populating Upcoming Activity venue info
-  const [dbVenues, setDbVenues] = useState([]);
-
-  // Fetch venues from backend /api/venues table
-  useEffect(() => {
-    async function fetchDbVenues() {
-      try {
-        const apiUrl = import.meta.env.VITE_API_URL || '';
-        const response = await apiFetch(`${apiUrl}/api/venues`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.venues && data.venues.length > 0) {
-            setDbVenues(data.venues);
-          }
-        }
-      } catch (err) {
-        console.warn('Could not fetch venues for home dashboard:', err);
-      }
-    }
-    fetchDbVenues();
-  }, []);
+  const [dbVenues] = useState([]);
 
   // Persist matchmaking draft locally whenever it changes
   useEffect(() => {
