@@ -31,6 +31,18 @@ jobs:
       (
         github.event_name == 'push' &&
         github.ref_name == 'dev'
+      ) ||
+      (
+        github.event_name == 'pull_request' &&
+        github.event.action == 'closed' &&
+        github.event.pull_request.merged == true &&
+        github.event.pull_request.base.ref == 'dev' &&
+        (
+          startsWith(github.event.pull_request.head.ref, 'VER-') ||
+          contains(github.event.pull_request.head.ref, 'VER-') ||
+          startsWith(github.event.pull_request.head.ref, 'ver-') ||
+          contains(github.event.pull_request.head.ref, 'ver-')
+        )
       )
     name: Build & Deploy to Environment
     runs-on: ubuntu-latest
