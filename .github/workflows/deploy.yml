@@ -1,12 +1,6 @@
 name: Frontend CI/CD Pipeline
 
 on:
-  # Triggered when Pull Request is merged into dev
-  pull_request:
-    types: [closed]
-    branches:
-      - dev
-
   # Triggered automatically when code is pushed/merged into dev
   push:
     branches:
@@ -28,7 +22,7 @@ on:
 jobs:
   # ---------------------------------------------------------------
   # Deployment Job
-  # - Dev: Auto-deploys when a PR is merged into dev (or pushed to dev) 
+  # - Dev: Auto-deploys when code is merged/pushed into dev
   # - Test / Production: Deploys manually via workflow_dispatch
   # ---------------------------------------------------------------
   deploy:
@@ -71,8 +65,6 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             TARGET="${{ inputs.target_environment }}"
-          elif [ "${{ github.event_name }}" = "pull_request" ]; then
-            TARGET="${{ github.base_ref }}"
           else
             TARGET="${{ github.ref_name }}"
           fi

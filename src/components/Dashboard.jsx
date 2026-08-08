@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import HostGame from './HostGame';
+import GameDiscovery from './GameDiscovery';
 import '../index.css';
 import { apiFetch } from '../utils/api';
 import { DEFAULT_SPORTS } from './Auth';
@@ -64,26 +65,7 @@ export default function Dashboard({ user, onLogout }) {
   const [showMoreSports, setShowMoreSports] = useState(false);
 
   // Venues table state for populating Upcoming Activity venue info
-  const [dbVenues, setDbVenues] = useState([]);
-
-  // Fetch venues from backend /api/venues table
-  useEffect(() => {
-    async function fetchDbVenues() {
-      try {
-        const apiUrl = import.meta.env.VITE_API_URL || '';
-        const response = await apiFetch(`${apiUrl}/api/venues`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.venues && data.venues.length > 0) {
-            setDbVenues(data.venues);
-          }
-        }
-      } catch (err) {
-        console.warn('Could not fetch venues for home dashboard:', err);
-      }
-    }
-    fetchDbVenues();
-  }, []);
+  const [dbVenues] = useState([]);
 
   // Persist matchmaking draft locally whenever it changes
   useEffect(() => {
@@ -145,7 +127,7 @@ export default function Dashboard({ user, onLogout }) {
 
       try {
         const apiUrl = import.meta.env.VITE_API_URL || '';
-        
+
         // Fetch preferred sports & all available sports concurrently
         const [preferredRes, allRes] = await Promise.allSettled([
           apiFetch(`${apiUrl}/api/sports/preferred`),
@@ -254,13 +236,15 @@ export default function Dashboard({ user, onLogout }) {
     }));
     if (type === 'host') {
       setActiveNav('host_game');
+    } else if (type === 'join') {
+      setWizardStep(3);
     }
   };
 
   const handleStep2Continue = () => {
     if (matchmakingData.gameType === 'host') {
       setActiveNav('host_game');
-    } else if (matchmakingData.gameType) {
+    } else if (matchmakingData.gameType === 'join' || matchmakingData.gameType) {
       setWizardStep(3);
     }
   };
@@ -756,7 +740,7 @@ export default function Dashboard({ user, onLogout }) {
                         handleGameTypeSelect('host');
                       }}
                     >
-                      Select Host
+                      Host Game
                     </button>
                   </div>
 
@@ -780,7 +764,7 @@ export default function Dashboard({ user, onLogout }) {
                         handleGameTypeSelect('join');
                       }}
                     >
-                      Select Join
+                      Join Game
                     </button>
                   </div>
                 </div>
@@ -803,49 +787,16 @@ export default function Dashboard({ user, onLogout }) {
               </>
             )}
 
-            {/* STEP 3: ACTION / SUMMARY */}
+            {/* STEP 3: ACTION / GAME DISCOVERY */}
             {wizardStep === 3 && (
-              <>
-                <div className="vs-heading-group">
-                  <h2 className="vs-page-title">Match Action Details</h2>
-                  <p className="vs-page-subtitle">
-                    Review your game parameters before submitting to the network.
-                  </p>
-                </div>
-
-                <div className="card vs-summary-card">
-                  <h3 className="vs-summary-title">Recorded Payload Summary</h3>
-                  <div className="vs-summary-grid">
-                    <div className="summary-item">
-                      <span className="summary-label">Selected Sport:</span>
-                      <strong className="summary-value">{matchmakingData.sportName}</strong>
-                    </div>
-                    <div className="summary-item">
-                      <span className="summary-label">Game Mode / Type:</span>
-                      <strong className="summary-value">
-                        {matchmakingData.gameType === 'host' ? 'Host a Game' : 'Join Existing Game'}
-                      </strong>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="vs-action-footer vs-between">
-                  <button className="vs-back-btn" onClick={() => setWizardStep(2)}>
-                    <i className="fa-solid fa-arrow-left"></i>
-                    <span>Back</span>
-                  </button>
-
-                  <button
-                    className="vs-continue-btn"
-                    onClick={() => {
-                      alert(`Payload ready to submit:\n${JSON.stringify(matchmakingData, null, 2)}`);
-                    }}
-                  >
-                    <span>Submit Request</span>
-                    <i className="fa-solid fa-paper-plane"></i>
-                  </button>
-                </div>
-              </>
+              <GameDiscovery
+                user={user}
+                selectedSport={{
+                  id: matchmakingData.sportId,
+                  name: matchmakingData.sportName
+                }}
+                onBack={() => setWizardStep(2)}
+              />
             )}
           </div>
         )}
