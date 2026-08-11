@@ -61,7 +61,7 @@ export default function GameDiscovery({ selectedSport, onBack, user }) {
   // Get current date string formatted as YYYY-MM-DD for setting min date restriction
   const todayString = new Date().toISOString().split('T')[0];
 
-  const sportId = selectedSport?.id || localStorage.getItem('sportId') || 'aaeecab8-52bc-49fc-9099-0caba91c489c';
+  const sportId = selectedSport?.id || 'aaeecab8-52bc-49fc-9099-0caba91c489c';
   const sportName = selectedSport?.name || 'Pickle Ball';
 
   useEffect(() => {
