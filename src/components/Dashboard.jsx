@@ -37,24 +37,13 @@ export default function Dashboard({ user, onLogout }) {
   // Matchmaking Stepper State (3 Steps: 1. Sport, 2. Type, 3. Action)
   const [wizardStep, setWizardStep] = useState(1);
 
-  // Locally recorded inputs payload state
-  const [matchmakingData, setMatchmakingData] = useState(() => {
-    const saved = localStorage.getItem('vs_matchmaking_draft');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed.sportId || parsed.gameId) return parsed;
-      } catch {
-        // Fallback
-      }
-    }
-    return {
-      gameId: '287dae3a-cf4e-43dd-b842-e232cc378c36', // Default Basketball ID
-      sportId: '287dae3a-cf4e-43dd-b842-e232cc378c36',
-      sportName: 'Basketball',
-      gameType: null, // 'host' | 'join'
-      userPreference: null // 'host_a_game' | 'find_a_match'
-    };
+  // Locally recorded inputs payload state (kept in component memory)
+  const [matchmakingData, setMatchmakingData] = useState({
+    gameId: null,
+    sportId: null,
+    sportName: null,
+    gameType: null, // 'host' | 'join'
+    userPreference: null // 'host_a_game' | 'find_a_match'
   });
 
   // Sports list state
@@ -67,14 +56,12 @@ export default function Dashboard({ user, onLogout }) {
   // Venues table state for populating Upcoming Activity venue info
   const [dbVenues] = useState([]);
 
-  // Persist matchmaking draft locally whenever it changes
+  // Clean up legacy local storage keys and manage userPreference
   useEffect(() => {
-    localStorage.setItem('vs_matchmaking_draft', JSON.stringify(matchmakingData));
-    if (matchmakingData.gameId || matchmakingData.sportId) {
-      const idToStore = matchmakingData.gameId || matchmakingData.sportId;
-      localStorage.setItem('gameId', idToStore);
-      localStorage.setItem('sportId', idToStore);
-    }
+    localStorage.removeItem('vs_matchmaking_draft');
+    localStorage.removeItem('gameId');
+    localStorage.removeItem('sportId');
+
     if (matchmakingData.userPreference) {
       localStorage.setItem('userPreference', matchmakingData.userPreference);
     } else if (matchmakingData.gameType) {
@@ -221,8 +208,12 @@ export default function Dashboard({ user, onLogout }) {
     }));
   };
 
+  const isSportSelected = Boolean(
+    matchmakingData.sportId && sports.some((s) => s.id === matchmakingData.sportId)
+  );
+
   const handleStep1Continue = () => {
-    if (matchmakingData.sportId || matchmakingData.gameId) {
+    if (isSportSelected) {
       setWizardStep(2);
     }
   };
@@ -251,8 +242,8 @@ export default function Dashboard({ user, onLogout }) {
 
   if (activeNav === 'host_game') {
     const currentSport = sports.find((s) => s.id === matchmakingData.sportId) || {
-      id: matchmakingData.sportId || '287dae3a-cf4e-43dd-b842-e232cc378c36',
-      name: matchmakingData.sportName || 'Basketball'
+      id: matchmakingData.sportId || '',
+      name: matchmakingData.sportName || ''
     };
     return (
       <HostGame
@@ -693,7 +684,7 @@ export default function Dashboard({ user, onLogout }) {
                     <div className="vs-action-footer">
                       <button
                         className="vs-continue-btn"
-                        disabled={!matchmakingData.sportId}
+                        disabled={!isSportSelected}
                         onClick={handleStep1Continue}
                       >
                         <span>Continue</span>

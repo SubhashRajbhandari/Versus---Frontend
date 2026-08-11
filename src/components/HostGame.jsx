@@ -192,8 +192,6 @@ export default function HostGame({ user, selectedSport, onCancel, onSuccess, onL
 
       // Store in local storage for session reference
       localStorage.setItem('vs_hosted_game', JSON.stringify(payload));
-      localStorage.setItem('gameId', selectedSportId);
-      localStorage.setItem('sportId', selectedSportId);
       localStorage.setItem('userPreference', 'host_a_game');
 
       const apiUrl = import.meta.env.VITE_API_URL || '';
