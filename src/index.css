@@ -3039,4 +3039,107 @@ body:has(.landing-page) {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-}
+}
+
+/* ==========================================================================
+   Action Emerald Toast & Pending Request Tags
+   ========================================================================== */
+
+.vs-toast {
+    position: fixed;
+    top: 24px;
+    right: 28px;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 1rem 1.35rem;
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(4, 120, 87, 0.35), 0 4px 12px rgba(0, 0, 0, 0.1);
+    animation: vsToastSlideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    max-width: 420px;
+}
+
+@keyframes vsToastSlideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-24px) scale(0.94);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Action Emerald Toast (Success Theme) */
+.vs-toast-success {
+    background: linear-gradient(135deg, #047857 0%, #065F46 100%);
+    border: 1.5px solid #059669;
+    color: #FFFFFF;
+}
+
+.vs-toast-error {
+    background: linear-gradient(135deg, #991B1B 0%, #7F1D1D 100%);
+    border: 1.5px solid #EF4444;
+    color: #FFFFFF;
+}
+
+.vs-toast-icon {
+    font-size: 1.35rem;
+    color: #34D399;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vs-toast-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.vs-toast-message {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.3;
+}
+
+.vs-toast-close {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 50%;
+    color: #FFFFFF;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+    margin-left: 0.5rem;
+}
+
+.vs-toast-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Pending Status Badge (Replaces Request button when requested) */
+.vs-request-pending-tag {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #ECFDF5;
+    border: 1.5px solid #A7F3D0;
+    border-radius: 10px;
+    color: #047857;
+    font-size: 0.9rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    user-select: none;
+}
+
