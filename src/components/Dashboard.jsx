@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import HostGame from './HostGame';
 import GameDiscovery from './GameDiscovery';
+import Toast from './Toast';
 import '../index.css';
 import { apiFetch } from '../utils/api';
 import { DEFAULT_SPORTS } from './Auth';
@@ -33,6 +34,16 @@ const getSportIcon = (name) => {
 export default function Dashboard({ user, onLogout }) {
   const [activeNav, setActiveNav] = useState('home'); // 'home' | 'matchmaking' | 'host_game'
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const handleJoinSuccess = (eventData, customMsg) => {
+    setToast({
+      message: customMsg || 'Join Request Sent Successfully!',
+      type: 'success'
+    });
+    setActiveNav('home');
+    setWizardStep(1);
+  };
 
   // Matchmaking Stepper State (3 Steps: 1. Sport, 2. Type, 3. Action)
   const [wizardStep, setWizardStep] = useState(1);
@@ -261,6 +272,13 @@ export default function Dashboard({ user, onLogout }) {
 
   return (
     <div className="vs-app-container">
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
       {/* Left Sidebar */}
       <aside className="vs-sidebar">
         <div className="vs-sidebar-top">
@@ -787,6 +805,7 @@ export default function Dashboard({ user, onLogout }) {
                   name: matchmakingData.sportName
                 }}
                 onBack={() => setWizardStep(2)}
+                onJoinSuccess={handleJoinSuccess}
               />
             )}
           </div>
