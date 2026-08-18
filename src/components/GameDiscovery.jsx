@@ -49,19 +49,34 @@ const formatEventTime = (isoString) => {
   return `${dayName}, ${timeStr}`;
 };
 
-export default function GameDiscovery({ selectedSport, onBack, user }) {
+export default function GameDiscovery({ selectedSport, onBack, user, onJoinSuccess }) {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchDate, setSearchDate] = useState('');
   const [activeSearchDate, setActiveSearchDate] = useState('');
-  const [joinedEventIds, setJoinedEventIds] = useState(new Set());
+  const [joinedEventIds, setJoinedEventIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem('vs_joined_event_ids');
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+  const [requestedSportIds, setRequestedSportIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem('vs_requested_sport_ids');
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
   const [requestingId, setRequestingId] = useState(null);
 
   // Get current date string formatted as YYYY-MM-DD for setting min date restriction
   const todayString = new Date().toISOString().split('T')[0];
 
-  const sportId = selectedSport?.id || localStorage.getItem('sportId') || 'aaeecab8-52bc-49fc-9099-0caba91c489c';
+  const sportId = selectedSport?.id || 'aaeecab8-52bc-49fc-9099-0caba91c489c';
   const sportName = selectedSport?.name || 'Pickle Ball';
 
   useEffect(() => {
@@ -111,12 +126,56 @@ export default function GameDiscovery({ selectedSport, onBack, user }) {
     setError(null);
   };
 
-  const handleRequestToJoin = (eventId) => {
+  const handleRequestToJoin = async (evtObj) => {
+    const eventId = typeof evtObj === 'string' ? evtObj : evtObj?.id;
+    if (!eventId || requestingId) return;
+
     setRequestingId(eventId);
-    setTimeout(() => {
-      setJoinedEventIds((prev) => new Set(prev).add(eventId));
+    setError(null);
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const response = await apiFetch(`${apiUrl}/api/events/${eventId}/join`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const resData = await response.json().catch(() => ({}));
+
+      if (response.ok || response.status === 409) {
+        // Success or already pending join request
+        const successMessage = 'Join Request Sent Successfully!';
+
+        setJoinedEventIds((prev) => {
+          const next = new Set(prev).add(eventId);
+          try {
+            localStorage.setItem('vs_joined_event_ids', JSON.stringify(Array.from(next)));
+          } catch {}
+          return next;
+        });
+
+        setRequestedSportIds((prev) => {
+          const next = new Set(prev).add(sportId);
+          try {
+            localStorage.setItem('vs_requested_sport_ids', JSON.stringify(Array.from(next)));
+          } catch {}
+          return next;
+        });
+
+        if (onJoinSuccess) {
+          onJoinSuccess(evtObj, successMessage);
+        }
+      } else {
+        setError(resData.error || 'Failed to submit join request.');
+      }
+    } catch (err) {
+      console.error('Error submitting join request:', err);
+      setError('Error connecting to events service.');
+    } finally {
       setRequestingId(null);
-    }, 400);
+    }
   };
 
   return (
@@ -205,7 +264,15 @@ export default function GameDiscovery({ selectedSport, onBack, user }) {
       ) : (
         <div className="vs-events-grid">
           {events.map((evt) => {
-            const isJoined = joinedEventIds.has(evt.id);
+            const isEventRequested =
+              joinedEventIds.has(evt.id) ||
+              evt.has_requested_to_join ||
+              evt.has_joined ||
+              evt.user_participant_status === 'pending' ||
+              evt.user_participant_status === 'approved' ||
+              evt.user_participant_status === 'joined' ||
+              requestedSportIds.has(evt.sport?.id || sportId);
+
             const isRequesting = requestingId === evt.id;
             const bgImage = getSportImage(evt.sport?.name || sportName, evt.event_name);
 
@@ -255,26 +322,25 @@ export default function GameDiscovery({ selectedSport, onBack, user }) {
                     </div>
                   </div>
 
-                  {/* Card Action Button */}
-                  <button
-                    className={`vs-request-join-btn ${isJoined ? 'requested' : ''}`}
-                    onClick={() => !isJoined && handleRequestToJoin(evt.id)}
-                    disabled={isJoined || isRequesting}
-                  >
-                    {isRequesting ? (
-                      <>
-                        <span className="vs-btn-spinner"></span>
-                        <span>Sending Request...</span>
-                      </>
-                    ) : isJoined ? (
-                      <>
-                        <i className="fa-solid fa-check"></i>
-                        <span>Request Sent</span>
-                      </>
-                    ) : (
-                      'Request to Join'
-                    )}
-                  </button>
+                  {/* Card Action Area: Disappears when requested */}
+                  {isRequesting ? (
+                    <button className="vs-request-join-btn" disabled>
+                      <span className="vs-btn-spinner"></span>
+                      <span>Sending Request...</span>
+                    </button>
+                  ) : isEventRequested ? (
+                    <div className="vs-request-pending-tag">
+                      <i className="fa-solid fa-circle-check"></i>
+                      <span>Join Request Pending</span>
+                    </div>
+                  ) : (
+                    <button
+                      className="vs-request-join-btn"
+                      onClick={() => handleRequestToJoin(evt)}
+                    >
+                      Request to Join
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -284,3 +350,4 @@ export default function GameDiscovery({ selectedSport, onBack, user }) {
     </div>
   );
 }
+

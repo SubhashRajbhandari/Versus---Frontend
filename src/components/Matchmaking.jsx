@@ -33,16 +33,12 @@ export default function Matchmaking({ user, onLogout }) {
   const [secondarySports, setSecondarySports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showMore, setShowMore] = useState(false);
-  const [selectedSport, setSelectedSport] = useState(() => {
-    return localStorage.getItem('gameId') || '287dae3a-cf4e-43dd-b842-e232cc378c36'; // Default Basketball UUID
-  });
+  const [selectedSport, setSelectedSport] = useState(null);
 
   useEffect(() => {
-    if (selectedSport) {
-      localStorage.setItem('gameId', selectedSport);
-      localStorage.setItem('sportId', selectedSport);
-    }
-  }, [selectedSport]);
+    localStorage.removeItem('gameId');
+    localStorage.removeItem('sportId');
+  }, []);
 
   useEffect(() => {
     async function fetchSports() {
@@ -136,9 +132,6 @@ export default function Matchmaking({ user, onLogout }) {
           setPrimarySports(preferredList);
           setSecondarySports(remaining);
 
-          if (preferredList[0]?.id && !localStorage.getItem('gameId')) {
-            setSelectedSport(preferredList[0].id);
-          }
         } else {
           setPrimarySports(allList.slice(0, 8));
           setSecondarySports(allList.slice(8));
